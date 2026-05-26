@@ -19,14 +19,12 @@ type SettingSection = {
 export const AppSettings = memo(() => {
   const navigate = useNavigate();
 
-  // ✅ Access store slices directly – no nested `actions`
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const logout = useAuthStore((s) => s.logout);
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const skipRedirect = useRef(false); // Prevent automatic redirect during our logout
+  const skipRedirect = useRef(false);
 
-  // Redirect if already logged out (but skip during manual logout)
   useEffect(() => {
     if (!isAuthenticated && !skipRedirect.current) {
       navigate('/auth', { replace: true });
@@ -43,10 +41,8 @@ export const AppSettings = memo(() => {
     setIsLoggingOut(true);
 
     try {
-      // Clear persisted state if needed (optional, now that logout resets state)
       useAuthStore.persist?.clearStorage?.();
-      await logout(); // ✅ Top-level function
-      // Show loader for 2 seconds
+      await logout();
       await new Promise((resolve) => setTimeout(resolve, 2000));
       navigate('/auth', { replace: true });
     } catch (error) {
@@ -56,7 +52,6 @@ export const AppSettings = memo(() => {
     }
   };
 
-  // ----- Settings state and sections (unchanged) -----
   const [settings, setSettings] = useState({
     notifications: true,
     darkMode: true,
@@ -109,15 +104,12 @@ export const AppSettings = memo(() => {
 
   return (
     <div className="safe-area pt-6 pb-24 px-4 bg-base-body text-gray-900 space-y-6 select-none">
-      {/* Full‑screen logout loader */}
       {isLoggingOut ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
           <div className="text-center space-y-4">
             <Loader size="lg" variant="spinner" />
             <p className="text-lg font-bold text-gray-900">Logging out...</p>
-            <p className="text-sm text-gray-500">
-              You'll be redirected shortly.
-            </p>
+            <p className="text-sm text-gray-500">You'll be redirected shortly.</p>
           </div>
         </div>
       ) : (
@@ -190,7 +182,10 @@ export const AppSettings = memo(() => {
           {/* App Info */}
           <div className="rounded-3xl border border-gray-200 bg-white shadow-sm p-6 text-center">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-primary/10 to-brand-primary/5 border border-brand-primary/30 flex items-center justify-center mx-auto mb-4">
-              <span className="text-2xl">🎰</span>
+              {/* Trophy icon replacing emoji */}
+              <svg className="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+              </svg>
             </div>
             <h3 className="font-bold text-gray-900">LottoNaija</h3>
             <p className="text-xs text-gray-500 font-mono mt-1">Version 2.1.0</p>

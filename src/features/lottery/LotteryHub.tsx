@@ -16,17 +16,29 @@ import { LOTTERY_TIERS } from '@/config/lottery.config';
 const NAV_ITEMS = [
   {
     label: 'My Tickets',
-    icon: '🎫',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+      </svg>
+    ),
     to: '/tickets',
   },
   {
     label: 'Winners',
-    icon: '🏆',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+      </svg>
+    ),
     to: '/winners',
   },
   {
     label: 'Results',
-    icon: '📊',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    ),
     to: '/results',
   },
 ];
@@ -45,58 +57,31 @@ const NavigationCard = ({
   onClick,
 }: {
   label: string;
-  icon: string;
+  icon: React.ReactNode; // changed from string to ReactNode
   onClick: () => void;
 }) => (
   <button
     onClick={onClick}
     className="
-      group
-      relative
-      overflow-hidden
-      rounded-2xl
-      border
-      border-border-light
-      bg-base-container
-      p-4
-      active:scale-[0.97]
-      transition-all
-      duration-200
-      hover:border-brand-primary
-      hover:shadow-md
+      group relative overflow-hidden rounded-2xl border border-border-light
+      bg-base-container p-4 active:scale-[0.97] transition-all duration-200
+      hover:border-brand-primary hover:shadow-md
     "
   >
     <div
       className="
-        mx-auto
-        flex
-        h-14
-        w-14
-        items-center
-        justify-center
-        rounded-2xl
-        border
-        border-border-light
-        bg-gray-50
-        transition-transform
-        duration-200
-        group-hover:scale-105
+        mx-auto flex h-14 w-14 items-center justify-center rounded-2xl
+        border border-border-light bg-gray-50 text-gray-500
+        transition-transform duration-200 group-hover:scale-105
       "
     >
-      <span className="text-2xl">{icon}</span>
+      {icon}
     </div>
 
     <p
       className="
-        mt-3
-        text-center
-        text-[11px]
-        font-extrabold
-        uppercase
-        tracking-wide
-        text-gray-500
-        transition-colors
-        group-hover:text-black
+        mt-3 text-center text-[11px] font-extrabold uppercase tracking-wide
+        text-gray-500 transition-colors group-hover:text-black
       "
     >
       {label}
@@ -121,14 +106,7 @@ export const LotteryHub = memo(() => {
   }, []);
 
   return (
-    <main
-      className="
-        safe-area
-        bg-base-body
-        pb-24
-        text-black
-      "
-    >
+    <main className="safe-area bg-base-body pb-24 text-black">
       <LiveTicker />
 
       {!showTickets ? (
@@ -155,14 +133,12 @@ export const LotteryHub = memo(() => {
           {/* Tier Selector */}
           <section className="space-y-3">
             <SectionHeader title="Quick Pick Tiers" />
-
             <TierSelector onTierSelect={handleTierSelect} />
           </section>
 
           {/* Jackpot Pools */}
           <section className="space-y-4">
             <SectionHeader title="Live Jackpot Pools" />
-
             <div className="space-y-4">
               {LOTTERY_TIERS.map((tier) => (
                 <div key={tier.id} className="px-4">
@@ -181,19 +157,14 @@ export const LotteryHub = memo(() => {
           {/* Social Proof / Info */}
           <section className="space-y-6">
             <HowItWorks />
-
             <JackpotWinners />
-
             <LastWinner />
           </section>
         </div>
       ) : (
         <section className="animate-slide-up px-4 py-4">
           {selectedTier && (
-            <TicketSelector
-              tier={selectedTier}
-              onBack={handleBackToTiers}
-            />
+            <TicketSelector tier={selectedTier} onBack={handleBackToTiers} />
           )}
         </section>
       )}
@@ -202,5 +173,4 @@ export const LotteryHub = memo(() => {
 });
 
 LotteryHub.displayName = 'LotteryHub';
-
 export default LotteryHub;

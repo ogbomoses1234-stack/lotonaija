@@ -60,19 +60,21 @@ export const ReferralProgram = memo(() => {
 
       {/* Hero Card */}
       <div className="relative overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm p-6">
-        {/* Decorative line */}
         <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
 
         <div className="text-center mb-6">
           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand-primary/10 to-brand-primary/5 border border-brand-primary/30 flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">👥</span>
+            {/* People group icon replacing 👥 */}
+            <svg className="w-8 h-8 text-brand-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
           </div>
           <h2 className="text-lg font-bold text-gray-900 mb-1">Invite Friends, Earn Cash</h2>
           <p className="text-sm text-gray-500">
             Get <span className="text-brand-primary font-bold">{AFFILIATE_CONFIG.commissionRate * 100}%</span> commission on every play
           </p>
         </div>
-
+ 
         {/* Referral Code */}
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 mb-4">
           <p className="text-[10px] text-gray-500 uppercase tracking-widest font-mono mb-2">Your Code</p>
