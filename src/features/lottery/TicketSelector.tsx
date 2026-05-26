@@ -198,7 +198,7 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
 
       {/* Purchase Drawer */}
       {selectedTicketIndex !== null && !purchaseSuccess && (
-        <div className="fixed bottom-10 left-0 right-0 max-w-md mx-auto z-50 px-4">
+        <div className="fixed bottom-40 left-0 right-0 max-w-md mx-auto z-50 px-4">
           <div className="rounded-2xl overflow-hidden bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl">
             <div className="p-5 flex items-center justify-between gap-4">
               <div>
@@ -212,7 +212,7 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
                 onClick={handlePurchase}
                 disabled={isPurchasing || balance < tier.price}
                 className={cn(
-                  "relative overflow-hidden bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black py-3.5 px-6 rounded-xl transition-all active:scale-95",
+                  "relative overflow-hidden bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black  py-3.5 px-6 rounded-xl transition-all active:scale-95",
                   (isPurchasing || balance < tier.price) && "opacity-50 cursor-not-allowed"
                 )}
               >
