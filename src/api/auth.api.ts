@@ -1,5 +1,5 @@
-import {   USE_MOCK_API } from './config';
 import type { UserProfile, AuthResponse, RegisterPayload } from '@/types/auth.types';
+import { USE_MOCK_API } from './config';
 
 // Real API client (only imported when not using mock)
 const getRealClient = () => import('./client').then(mod => mod.default);

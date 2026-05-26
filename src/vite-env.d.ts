@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_VERSION: string;
   readonly VITE_ENABLE_ANALYTICS: string;
   readonly VITE_DRAW_SCHEDULE: string;
+  // ✅ ADD: Mock API toggle
+  readonly VITE_USE_MOCK_API: string;
 }
 
 interface ImportMeta {
