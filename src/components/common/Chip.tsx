@@ -1,5 +1,5 @@
 import { memo, type ReactNode } from 'react';
-import { cn, chipClasses } from '@/utils/cn';
+import { cn } from '@/utils/cn';
 
 export type ChipProps = {
   children: ReactNode;
@@ -14,8 +14,8 @@ export type ChipProps = {
 };
 
 /**
- * Status indicator chip with brand color variants
- * Variants: success (emerald), warning (amber), transfer (purple), jackpot (pulsing amber), neutral (gray)
+ * Status indicator chip – light theme.
+ * Uses soft backgrounds and dark text for high contrast.
  */
 export const Chip = memo(({
   children,
@@ -30,21 +30,30 @@ export const Chip = memo(({
 }: ChipProps) => {
   const sizeClasses = {
     sm: 'px-2 py-0.5 text-xs',
-    md: 'px-3 py-1 text-xs'
+    md: 'px-3 py-1 text-xs',
   };
-  
+
+  // Light theme variant classes
+  const variantClasses = {
+    success: 'bg-brand-primary/10 text-brand-primary border-brand-primary/20',
+    warning: 'bg-amber-50 text-amber-700 border-amber-200',
+    transfer: 'bg-purple-50 text-purple-700 border-purple-200',
+    jackpot: 'bg-amber-50 text-amber-700 border-amber-300 animate-pulse',
+    neutral: 'bg-gray-100 text-gray-600 border-gray-200',
+  };
+
   const baseClasses = cn(
     'inline-flex items-center gap-1 rounded-full font-medium',
     'border transition-all duration-150',
-    chipClasses[variant],
+    variantClasses[variant],
     sizeClasses[size],
     onClick ? 'cursor-pointer hover:opacity-90 active:scale-95' : '',
     removable ? 'pr-1' : '',
-    className
+    className,
   );
-  
+
   const Element = onClick ? 'button' : 'span';
-  
+
   return (
     <Element
       className={baseClasses}
@@ -54,14 +63,14 @@ export const Chip = memo(({
     >
       {icon && <span className="flex-shrink-0">{icon}</span>}
       <span>{children}</span>
-      
+
       {removable && onRemove && (
         <button
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
           }}
-          className="ml-1 p-0.5 rounded-full hover:bg-black/20 transition-colors"
+          className="ml-1 p-0.5 rounded-full hover:bg-black/10 transition-colors"
           aria-label="Remove"
         >
           <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,5 +83,4 @@ export const Chip = memo(({
 });
 
 Chip.displayName = 'Chip';
-
 export default Chip;

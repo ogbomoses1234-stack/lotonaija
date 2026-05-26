@@ -2,32 +2,60 @@ import { useEffect, useState } from 'react';
 import { MarqueeTicker } from '@/components/ui/MarqueeTicker';
 import { formatNGN } from '@/utils/formatters';
 
+// 1. Explicitly declare the literal types to ensure perfect strictness
+type TickerPriority = 'high' | 'normal' | 'low';
+
+export type TickerItem = {
+  id: string;
+  content: React.ReactNode;
+  priority: TickerPriority;
+};
+
 /**
- * Live activity marquee below header
+ * Live activity marquee 
  * Simulates real-time draw updates and jackpot alerts
  */
 export const LiveTicker = () => {
-  const [items, setItems] = useState<Array<{ id: string; content: React.ReactNode; priority: 'high' | 'normal' | 'low' }>>([]);
+  // 2. Strongly type the state hook
+  const [items, setItems] = useState<TickerItem[]>([]);
 
   useEffect(() => {
     // In production, replace with WebSocket/API polling
-    const mockUpdates = [
-      { id: '1', content: <span>🎉 <strong>{formatNGN(450000)}</strong> won in Lagos</span>, priority: 'high' },
-      { id: '2', content: <span>🔥 Jackpot Pool: <strong>{formatNGN(50000000)}</strong></span>, priority: 'high' },
-      { id: '3', content: <span>🎫 12,840 tickets sold for 8PM Draw</span>, priority: 'normal' },
-      { id: '4', content: <span>⚡ Instant payouts under 24h guaranteed</span>, priority: 'low' },
-    ] as const; // <-- The fix! Tells TypeScript these strings are strict literals, not generic strings.
+    const mockUpdates: TickerItem[] = [
+      { 
+        id: '1', 
+        content: <span className="text-[#A0A5B1]">🎉 <strong className="text-white font-mono">{formatNGN(450000)}</strong> won in Lagos</span>, 
+        priority: 'high' 
+      },
+      { 
+        id: '2', 
+        content: <span className="text-[#A0A5B1]">🔥 Jackpot Pool: <strong className="text-brand-primary font-mono">{formatNGN(50000000)}</strong></span>, 
+        priority: 'high' 
+      },
+      { 
+        id: '3', 
+        content: <span className="text-[#A0A5B1]">🎫 <strong className="text-white">12,840</strong> tickets sold for 8PM Draw</span>, 
+        priority: 'normal' 
+      },
+      { 
+        id: '4', 
+        content: <span className="text-[#A0A5B1]">⚡ Instant payouts under 24h guaranteed</span>, 
+        priority: 'low' 
+      },
+    ];
     
-    setItems(mockUpdates as any);
+    // 3. No more `as any` bypass needed!
+    setItems(mockUpdates);
   }, []);
 
   return (
-    <div className="fixed bottom-[85px] left-0 right-0 z-40 max-w-[480px] mx-auto">
+    <div className="fixed bottom-[80px] left-1/2 -translate-x-1/2 w-full max-w-[480px] z-40">
+      {/* Flat High-Contrast Bar (Removed glass-panel, bg-black/20, and border-white/5) */}
       <MarqueeTicker 
         items={items} 
         speed="normal" 
         pauseOnHover 
-        className="glass-panel rounded-[20px] py-1.5 border-t-0 border-x-0 border-white/5 bg-black/20"
+        className="bg-[#1B1C1E] border-y border-[#2E3033] py-2 text-xs"
       />
     </div>
   );

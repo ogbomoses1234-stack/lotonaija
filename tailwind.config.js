@@ -9,17 +9,25 @@ export default {
     extend: {
       colors: {
         brand: {
-          primary: '#2563eb',    // blue-600
-          success: '#10b981',    // emerald-500
-          accent: '#f59e0b',     // amber-500
-          transfer: '#a855f7'    // purple-500
+          primary: 'var(--brand-primary)',     /* Maps directly to #6AD09D (Green) */
+          secondary: 'var(--brand-secondary)', /* Maps directly to #1B1C1E (Charcoal) */
+          success: 'var(--brand-success)',     /* Maps directly to #6AD09D (Green) */
+          danger: 'var(--brand-danger)',       /* Maps directly to #EF4444 (Red) */
+          warning: 'var(--brand-warning)',     /* Maps directly to #F59E0B (Amber) */
         },
         base: {
-          dark: '#0f172a'        // slate-900
+          body: 'var(--bg-body)',              /* Maps directly to #FFFFFF (White) */
+          container: 'var(--bg-container)',    /* Maps directly to #FFFFFF (White) */
+          panel: 'var(--bg-panel)',            /* Maps directly to #1B1C1E (Charcoal) */
+          card: 'var(--bg-card)',              /* Maps directly to #000000 (Black) */
+        },
+        border: {
+          flat: 'var(--border-flat)',          /* Maps directly to #2E3033 */
+          light: 'var(--border-light)',        /* Maps directly to #E5E7EB */
         }
       },
       borderRadius: {
-        card: '30px'
+        card: '16px'                           /* Updated from 30px to align with your index.css specifications */
       },
       screens: {
         'mobile-max': { max: '480px' }
@@ -27,7 +35,6 @@ export default {
       animation: {
         marquee: 'marquee 20s linear infinite',
         shake: 'shake 0.4s ease-in-out',
-        'laser-sweep': 'laser-sweep 1.2s ease-in-out forwards',
         'slide-up': 'slide-up 0.3s ease-out'
       },
       keyframes: {
@@ -39,12 +46,6 @@ export default {
           '0%, 100%': { transform: 'translateX(0)' },
           '25%': { transform: 'translateX(-5px)' },
           '75%': { transform: 'translateX(5px)' }
-        },
-        'laser-sweep': {
-          '0%': { left: '0%', opacity: '0' },
-          '10%': { opacity: '1' },
-          '90%': { opacity: '1' },
-          '100%': { left: '100%', opacity: '0' }
         },
         'slide-up': {
           '0%': { transform: 'translateY(100%)', opacity: '0' },

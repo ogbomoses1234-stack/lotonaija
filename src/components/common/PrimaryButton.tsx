@@ -16,8 +16,8 @@ export type PrimaryButtonProps = {
 };
 
 /**
- * Primary action button with brand colors and loading state
- * Variants: primary (blue), success (emerald), accent (amber), transfer (purple), ghost (outline)
+ * Primary action button with green brand colors and loading state
+ * Variants: primary (emerald), success (emerald-dark), accent (amber), transfer (violet), ghost (solid outline)
  */
 export const PrimaryButton = memo(({
   children,
@@ -32,23 +32,26 @@ export const PrimaryButton = memo(({
   'aria-label': ariaLabel
 }: PrimaryButtonProps) => {
   const variantClasses = {
-    primary: 'bg-brand-primary hover:bg-blue-700 active:bg-blue-800 text-white shadow-lg shadow-blue-900/30',
-    success: 'bg-brand-success hover:bg-emerald-600 active:bg-emerald-700 text-white',
-    accent: 'bg-brand-accent hover:bg-amber-600 active:bg-amber-700 text-slate-900 font-bold',
-    transfer: 'bg-brand-transfer hover:bg-purple-600 active:bg-purple-700 text-white',
-    ghost: 'bg-transparent border border-white/20 hover:bg-white/5 active:bg-white/10 text-white'
+    // ✅ Green primary theme
+    primary: 'bg-brand-primary hover:bg-brand-primary-dark active:bg-brand-primary/90 text-black font-bold shadow-solid-md',
+    success: 'bg-brand-success hover:bg-emerald-700 active:bg-emerald-800 text-black font-bold',
+    accent: 'bg-brand-accent hover:bg-amber-600 active:bg-amber-700 text-black font-bold',
+    transfer: 'bg-brand-transfer hover:bg-violet-600 active:bg-violet-700 text-white',
+    // ✅ Solid ghost variant (no glass)
+    ghost: 'bg-transparent border-2 border-brand-primary/30 hover:bg-brand-primary/10 active:bg-brand-primary/20 text-brand-primary font-semibold'
   };
   
   const sizeClasses = {
-    sm: 'px-4 py-2 text-sm rounded-[24px]',
-    md: 'px-6 py-3 text-base rounded-[30px]',
-    lg: 'px-8 py-4 text-lg rounded-[30px]'
+    sm: 'px-4 py-2 text-sm rounded-xl',
+    md: 'px-6 py-3 text-base rounded-2xl',
+    lg: 'px-8 py-4 text-lg rounded-2xl'
   };
   
   const baseClasses = cn(
     'font-semibold transition-all duration-150 flex items-center justify-center gap-2',
     'disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-base-dark',
+    'active:scale-[0.98]', // ✅ Subtle press effect
     variantClasses[variant],
     sizeClasses[size],
     fullWidth ? 'w-full' : '',

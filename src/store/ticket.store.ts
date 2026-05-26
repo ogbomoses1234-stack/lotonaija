@@ -15,18 +15,18 @@ interface TicketState {
   isPurchasing: boolean;
   transferModalOpen: boolean;
   selectedTicketForTransfer: Ticket | null;
-  actions: {
-    setPlayMode: (mode: PlayMode) => void;
-    setTier: (tierId: string) => void;
-    toggleNumber: (num: number) => boolean;
-    clearNumbers: () => void;
-    autoPick: () => void;
-    purchase: () => Promise<boolean>;
-    fetchTickets: () => Promise<void>;
-    openTransfer: (ticket: Ticket) => void;
-    closeTransfer: () => void;
-    executeTransfer: (payload: TransferPayload) => Promise<boolean>;
-  };
+
+  // top‑level actions
+  setPlayMode: (mode: PlayMode) => void;
+  setTier: (tierId: string) => void;
+  toggleNumber: (num: number) => boolean;
+  clearNumbers: () => void;
+  autoPick: () => void;
+  purchase: () => Promise<boolean>;
+  fetchTickets: () => Promise<void>;
+  openTransfer: (ticket: Ticket) => void;
+  closeTransfer: () => void;
+  executeTransfer: (payload: TransferPayload) => Promise<boolean>;
 }
 
 export const useTicketStore = create<TicketState>()((set, get) => ({
@@ -38,95 +38,89 @@ export const useTicketStore = create<TicketState>()((set, get) => ({
   isPurchasing: false,
   transferModalOpen: false,
   selectedTicketForTransfer: null,
-  actions: {
-    setPlayMode: (mode) => set({ playMode: mode }),
-    setTier: (tierId) => {
-      const tier = LOTTERY_TIERS.find(t => t.id === tierId) || LOTTERY_TIERS[0];
-      set({ activeTier: tier });
-    },
-    toggleNumber: (num) => {
-      const { selectedNumbers, activeTier } = get();
-      if (selectedNumbers.includes(num)) {
-        set({ selectedNumbers: selectedNumbers.filter(n => n !== num) });
-        return true;
-      }
-      if (selectedNumbers.length >= activeTier.maxPicks) return false;
-      set({ selectedNumbers: [...selectedNumbers, num].sort((a, b) => a - b) });
+
+  setPlayMode: (mode) => set({ playMode: mode }),
+  setTier: (tierId) => {
+    const tier = LOTTERY_TIERS.find(t => t.id === tierId) || LOTTERY_TIERS[0];
+    set({ activeTier: tier });
+  },
+  toggleNumber: (num) => {
+    const { selectedNumbers, activeTier } = get();
+    if (selectedNumbers.includes(num)) {
+      set({ selectedNumbers: selectedNumbers.filter(n => n !== num) });
       return true;
-    },
-    clearNumbers: () => set({ selectedNumbers: [] }),
-    autoPick: () => {
-      const { activeTier } = get();
-      set({ selectedNumbers: generateUniqueNumbers(activeTier.maxPicks, NUMBER_GRID.min, NUMBER_GRID.max) });
-    },
-    purchase: async () => {
-      const { selectedNumbers, activeTier } = get();
-      if (selectedNumbers.length === 0) return false;
-      
-      const totalCost = activeTier.price; // ✅ Flat price per ticket
-      const { balance } = useWalletStore.getState();
-      
-      if (balance < totalCost) return false;
-      set({ isPurchasing: true });
-      
-      try {
-        await lotteryApi.purchaseTicket({ 
-          tierId: activeTier.id, 
-          numbers: selectedNumbers 
-        });
-        
-        useWalletStore.getState().actions.fetchBalance();
-        get().actions.fetchTickets();
-        
-        set({ selectedNumbers: [], isPurchasing: false });
-        return true;
-      } catch {
-        set({ isPurchasing: false });
-        return false;
-      }
-    },
-    fetchTickets: async () => {
-      try {
-        const { data } = await ticketsApi.getMyTickets();
-        set({
-          activeTickets: data.active as Ticket[],
-          historicTickets: data.history as unknown as Ticket[]
-        });
-      } catch { /* silent */ }
-    },
-    openTransfer: (ticket) => set({ transferModalOpen: true, selectedTicketForTransfer: ticket }),
-    closeTransfer: () => set({ transferModalOpen: false, selectedTicketForTransfer: null }),
-    
-    // ✅ UPDATED: executeTransfer action
-    executeTransfer: async (payload: TransferPayload) => {
-      try {
-        // Call API (mock or real)
-        await ticketsApi.transferTicket(payload);
-        
-        // Update local state optimistically
-        set(state => ({
-          activeTickets: state.activeTickets.map(t =>
-            t.id === payload.ticketId
-              ? { 
-                  ...t, 
-                  status: 'transferred', 
-                  transferredTo: { 
-                    phone: payload.recipientPhone, 
-                    name: 'Recipient', 
-                    transferredAt: new Date().toISOString() 
-                  } 
-                }
-              : t
-          ),
-          transferModalOpen: false,
-          selectedTicketForTransfer: null
-        }));
-        
-        return true;
-      } catch (err) {
-        console.error('Transfer failed:', err);
-        return false;
-      }
     }
-  }
+    if (selectedNumbers.length >= activeTier.maxPicks) return false;
+    set({ selectedNumbers: [...selectedNumbers, num].sort((a, b) => a - b) });
+    return true;
+  },
+  clearNumbers: () => set({ selectedNumbers: [] }),
+  autoPick: () => {
+    const { activeTier } = get();
+    set({ selectedNumbers: generateUniqueNumbers(activeTier.maxPicks, NUMBER_GRID.min, NUMBER_GRID.max) });
+  },
+  purchase: async () => {
+    const { selectedNumbers, activeTier } = get();
+    if (selectedNumbers.length === 0) return false;
+
+    const totalCost = activeTier.price;
+    const { balance } = useWalletStore.getState();
+
+    if (balance < totalCost) return false;
+    set({ isPurchasing: true });
+
+    try {
+      await lotteryApi.purchaseTicket({
+        tierId: activeTier.id,
+        numbers: selectedNumbers,
+      });
+
+      // ✅ wallet store fetchBalance is now a top‑level function
+      useWalletStore.getState().fetchBalance();
+      get().fetchTickets();
+
+      set({ selectedNumbers: [], isPurchasing: false });
+      return true;
+    } catch {
+      set({ isPurchasing: false });
+      return false;
+    }
+  },
+  fetchTickets: async () => {
+    try {
+      const { data } = await ticketsApi.getMyTickets();
+      set({
+        activeTickets: data.active as Ticket[],
+        historicTickets: data.history as unknown as Ticket[],
+      });
+    } catch { /* silent */ }
+  },
+  openTransfer: (ticket) => set({ transferModalOpen: true, selectedTicketForTransfer: ticket }),
+  closeTransfer: () => set({ transferModalOpen: false, selectedTicketForTransfer: null }),
+  executeTransfer: async (payload) => {
+    try {
+      await ticketsApi.transferTicket(payload);
+      set(state => ({
+        activeTickets: state.activeTickets.map(t =>
+          t.id === payload.ticketId
+            ? {
+                ...t,
+                status: 'transferred',
+                transferredTo: {
+                  phone: payload.recipientPhone,
+                  name: 'Recipient',
+                  transferredAt: new Date().toISOString(),
+                },
+              }
+            : t
+        ),
+        transferModalOpen: false,
+        selectedTicketForTransfer: null,
+      }));
+      return true;
+    } catch (err) {
+      console.error('Transfer failed:', err);
+      return false;
+    }
+  },
 }));

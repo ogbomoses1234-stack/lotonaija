@@ -1,4 +1,4 @@
-import { memo, useState } from 'react'; // ✅ FIX: Import useState
+import { memo, useState } from 'react';
 import { useTicketStore, useWalletStore } from '@/store';
 import { cn } from '@/utils/cn';
 import { formatNGN } from '@/utils/formatters';
@@ -6,29 +6,26 @@ import { useWalletGuard } from '@/hooks/useWalletGuard';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { DeficitModal } from './DeficitModal';
 
-/**
- * Stickily anchored container compiling total dynamic quantities
- */
 export const CheckoutBar = memo(() => {
-  const { selectedNumbers, activeTier, actions, isPurchasing } = useTicketStore();
-  const { balance } = useWalletStore();
-  const { checkBalance,   } = useWalletGuard();
-  
-  // ✅ FIX: useState is now defined because we imported it above
+  const selectedNumbers = useTicketStore((s) => s.selectedNumbers);
+  const activeTier = useTicketStore((s) => s.activeTier);
+  const purchase = useTicketStore((s) => s.purchase);
+  const isPurchasing = useTicketStore((s) => s.isPurchasing);
+  const balance = useWalletStore((s) => s.balance);
+  const { checkBalance } = useWalletGuard();
   const [showDeficit, setShowDeficit] = useState(false);
 
   const total = selectedNumbers.length * activeTier.price;
-  const { hasSufficientFunds,   } = checkBalance(total);
+  const { hasSufficientFunds } = checkBalance(total);
 
   const handleCheckout = () => {
     if (!hasSufficientFunds) {
       setShowDeficit(true);
     } else {
-      actions.purchase();
+      purchase();
     }
   };
 
-  // Don't render if no numbers selected
   if (selectedNumbers.length === 0) return null;
 
   return (
@@ -49,9 +46,8 @@ export const CheckoutBar = memo(() => {
           Play Now
         </PrimaryButton>
       </div>
-
       <DeficitModal 
-        isOpen={showDeficit || !hasSufficientFunds}
+        isOpen={showDeficit}
         onClose={() => setShowDeficit(false)}
         totalCost={total}
         walletBalance={balance}

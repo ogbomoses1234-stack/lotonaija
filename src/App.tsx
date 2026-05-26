@@ -3,7 +3,6 @@ import { OfflineBanner } from './layout/OfflineBanner';
 import { useWalletStore } from './store/wallet.store';
 import { useAuthStore } from './store/auth.store';
 import { useNetwork } from './hooks/useNetwork';
- 
 
 /**
  * Root application provider & state initializer
@@ -11,25 +10,26 @@ import { useNetwork } from './hooks/useNetwork';
  */
 export const App = () => {
   const { isOnline } = useNetwork();
-  const { actions: authActions } = useAuthStore();
-  const { actions: walletActions } = useWalletStore();
+
+  // ✅ Access store functions directly (no nested `actions` object)
+  const fetchProfile = useAuthStore((s) => s.fetchProfile);
+  const fetchBalance = useWalletStore((s) => s.fetchBalance);
 
   useEffect(() => {
     // Initialize stores on first mount
     const init = async () => {
       const token = localStorage.getItem('auth_token');
       if (token) {
-        await authActions.fetchProfile();
-        await walletActions.fetchBalance();
+        await fetchProfile();
+        await fetchBalance();
       }
     };
     init();
-  }, [authActions, walletActions]);
+  }, [fetchProfile, fetchBalance]);
 
   return (
     <div className={`relative ${!isOnline ? 'offline' : ''}`}>
       <OfflineBanner />
-    
       {/* Routes render here via GlobalShell -> Outlet */}
     </div>
   );

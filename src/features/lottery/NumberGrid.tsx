@@ -5,17 +5,15 @@ import { NUMBER_GRID } from '@/utils/constants';
 import { HapticTrigger } from '@/components/ui/HapticTrigger';
 import { TooltipWarning } from '@/components/ui/TooltipWarning';
 
-/**
- * 1-50 grid generator with max-6 limit, haptic shake & tooltip warning
- */
 export const NumberGrid = memo(() => {
-  const { selectedNumbers, actions } = useTicketStore();
+  const selectedNumbers = useTicketStore((s) => s.selectedNumbers);
+  const toggleNumber = useTicketStore((s) => s.toggleNumber);
+  const clearNumbers = useTicketStore((s) => s.clearNumbers);
   const [showMaxWarning, setShowMaxWarning] = useState(false);
 
   const handleSelect = (num: number) => {
-    const success = actions.toggleNumber(num);
+    const success = toggleNumber(num);
     if (!success) {
-      // Fire haptic shake simulation & tooltip
       if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
       setShowMaxWarning(true);
     }
@@ -33,7 +31,7 @@ export const NumberGrid = memo(() => {
       <div className="flex justify-between items-center mb-3 px-1">
         <h3 className="text-sm font-semibold text-white/80">Select up to {NUMBER_GRID.defaultMaxSelection} numbers</h3>
         {selectedNumbers.length > 0 && (
-          <button onClick={actions.clearNumbers} className="text-xs text-brand-accent underline">Clear All</button>
+          <button onClick={clearNumbers} className="text-xs text-brand-accent underline">Clear All</button>
         )}
       </div>
 
@@ -60,7 +58,6 @@ export const NumberGrid = memo(() => {
         })}
       </div>
 
-      {/* ✅ FIX: Use conditional rendering instead of isVisible prop */}
       {showMaxWarning && (
         <TooltipWarning message={`Maximum ${NUMBER_GRID.defaultMaxSelection} numbers allowed`} position="top" children={undefined} />
       )}

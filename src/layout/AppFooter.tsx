@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { Link } from 'react-router-dom'; 
+
 export const AppFooter = memo(() => {
   const quickLinks = [
     { label: 'Terms & Conditions', to: '/terms' },
@@ -39,22 +40,19 @@ export const AppFooter = memo(() => {
   ];
 
   return (
-    <footer className="mt-8 pt-6 pb-32 px-4 border-t border-white/5">
+    <footer className="mt-8 pt-6 pb-32 px-4 border-t border-[#2E3033]">
       {/* Licensing & Trust Card */}
-      <div className="glass-panel p-4 rounded-2xl mb-4 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="relative z-10 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="w-2 h-2 rounded-full bg-brand-success animate-pulse" />
-            <h4 className="text-[10px] font-bold text-white/60 uppercase tracking-widest font-mono">
-              Licensed & Regulated
-            </h4>
-          </div>
-          <p className="text-[10px] text-white/40 leading-relaxed">
-            LottoNaija operates under National Lottery Regulatory Commission (NLRC) License #NLRC-2024-001. 
-            All draws are independently audited for fairness, transparency, and responsible gaming compliance.
-          </p>
+      <div className="bg-[#1B1C1E] border border-[#2E3033] p-4 rounded-2xl mb-4 text-center">
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="w-2 h-2 rounded-full bg-brand-primary animate-pulse" />
+          <h4 className="text-[10px] font-bold text-[#A0A5B1] uppercase tracking-widest font-mono">
+            Licensed & Regulated
+          </h4>
         </div>
+        <p className="text-[10px] text-[#626670] leading-relaxed">
+          LottoNaija operates under National Lottery Regulatory Commission (NLRC) License #NLRC-2024-001. 
+          All draws are independently audited for fairness, transparency, and responsible gaming compliance.
+        </p>
       </div>
 
       {/* Quick Links Grid */}
@@ -63,7 +61,7 @@ export const AppFooter = memo(() => {
           <Link
             key={link.to}
             to={link.to}
-            className="glass-panel p-3 rounded-xl text-center text-[11px] text-white/60 hover:text-brand-primary hover:bg-white/5 transition-all duration-200 border border-white/5"
+            className="bg-[#1B1C1E] border border-[#2E3033] p-3 rounded-xl text-center text-[11px] text-[#A0A5B1] hover:text-brand-primary hover:border-brand-primary hover:bg-[#000000] transition-all duration-200"
           >
             {link.label}
           </Link>
@@ -78,7 +76,7 @@ export const AppFooter = memo(() => {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="glass-panel w-10 h-10 rounded-full flex items-center justify-center text-white/60 hover:text-brand-primary hover:bg-white/10 transition-all duration-200 border border-white/5"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-[#1B1C1E] border border-[#2E3033] text-[#A0A5B1] hover:text-brand-primary hover:border-brand-primary hover:bg-[#000000] transition-all duration-200"
             aria-label={`Follow us on ${social.name}`}
           >
             {social.icon}
@@ -88,11 +86,11 @@ export const AppFooter = memo(() => {
 
       {/* Legal & Copyright */}
       <div className="text-center space-y-2 pt-2">
-        <p className="text-[10px] text-white/30 font-mono uppercase tracking-wider flex items-center justify-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500/60" />
+        <p className="text-[10px] text-[#A0A5B1] font-mono uppercase tracking-wider flex items-center justify-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-brand-warning" />
           18+ Only • Play Responsibly • Odds Apply
         </p>
-        <p className="text-[9px] text-white/20">
+        <p className="text-[9px] text-[#626670]">
           © {new Date().getFullYear()} LottoNaija Ltd. All rights reserved.
         </p>
       </div>

@@ -4,19 +4,20 @@ import { cn } from '@/utils/cn';
 import { formatNGN, formatPoolSize } from '@/utils/formatters';
 import { HapticTrigger } from '@/components/ui/HapticTrigger';
 import { LOTTERY_TIERS, StandardTier } from '@/config/lottery.config';
- 
 
 export type TierSelectorProps = {
   onTierSelect?: (tier: StandardTier) => void;
 };
 
 export const TierSelector = memo(({ onTierSelect }: TierSelectorProps) => {
-  const { activeTier, actions } = useTicketStore();
+  const activeTier = useTicketStore((s) => s.activeTier);
+  const setTier = useTicketStore((s) => s.setTier);
 
   const handleTierClick = (tier: StandardTier) => {
-    actions.setTier(tier.id);
+    setTier(tier.id);
     onTierSelect?.(tier);
   };
+ 
 
   return (
     <div className="flex gap-4 overflow-x-auto pb-4 pt-2 -mx-4 px-4 scrollbar-hide snap-x">

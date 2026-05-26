@@ -11,8 +11,7 @@ export const QuickFundGrid = memo(() => {
 
   return (
     <>
-      {/* ✅ FIX: Removed px-1 — parent now handles horizontal padding via -mx-4 px-4 */}
-      <div className="grid grid-cols-3 gap-2 my-2">
+      <div className="grid grid-cols-3 gap-3">
         {WALLET_CONFIG.quickFundAmounts.map((amount) => {
           const isSelected = selectedAmount === amount;
           return (
@@ -24,44 +23,48 @@ export const QuickFundGrid = memo(() => {
                 setIsGatewayOpen(true);
               }}
               className={cn(
-                "relative flex flex-col justify-between overflow-hidden rounded-xl pt-3 pb-2.5 w-full text-left border border-white/10 transition-all duration-300",
-                "bg-gradient-to-b from-[#1a1a2e] to-[#0f0f1a] hover:bg-white/5",
-                isSelected && "ring-1 ring-pink-500/40 scale-[1.01] bg-gradient-to-b from-[#25103a] via-[#150724] to-[#0a0216]"
+                'group relative overflow-hidden rounded-2xl border-2 border-dashed border-gray-200 bg-white p-4 text-left transition-all duration-300',
+                'hover:border-brand-primary hover:shadow-md',
+                isSelected && 'border-brand-primary ring-2 ring-brand-primary/30 scale-[1.02] bg-brand-primary/[0.02]',
               )}
             >
-              {/* Sheen overlay */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/[0.02] to-white/[0.05] pointer-events-none" />
-              
-              {/* Top indicator */}
-              <div className="px-2.5 border-b border-dashed border-white/10 pb-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[8px] font-black tracking-widest text-white/30 uppercase font-mono">
-                    FUND
-                  </span>
-                  <div className={cn(
-                    "w-1 h-1 rounded-full transition-all duration-300",
-                    isSelected ? "bg-pink-400 animate-pulse" : "bg-white/10"
-                  )} />
-                </div>
+              {/* Perforation effect */}
+              <div className="absolute inset-0 border-2 border-dotted border-gray-100 rounded-2xl pointer-events-none" />
+
+              {/* Top label */}
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-[8px] font-black tracking-widest text-gray-400 uppercase font-mono">
+                  FUND
+                </span>
+                <div
+                  className={cn(
+                    'w-1.5 h-1.5 rounded-full transition-all',
+                    isSelected ? 'bg-brand-primary animate-pulse' : 'bg-gray-200',
+                  )}
+                />
               </div>
 
-              {/* Amount display */}
+              {/* Amount */}
               <div className="py-2 text-center">
-                <p className={cn(
-                  "text-lg font-black tracking-tighter",
-                  isSelected ? "text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-100 to-white" : "text-white/90"
-                )}>
+                <p
+                  className={cn(
+                    'text-xl font-black tracking-tighter transition-colors',
+                    isSelected ? 'text-brand-primary' : 'text-gray-900',
+                  )}
+                >
                   {formatNGN(amount, { showSymbol: false })}
                 </p>
               </div>
 
-              {/* Footer */}
-              <div className="pt-1.5 border-t border-dashed border-white/10">
-                <p className={cn(
-                  "text-[8px] text-center font-black font-mono tracking-[0.2em] uppercase",
-                  isSelected ? "text-pink-400" : "text-white/20"
-                )}>
-                  {isSelected ? '★' : 'TAP'}
+              {/* Scratch foil overlay (visual hint) */}
+              <div className="mt-2 pt-2 border-t border-dashed border-gray-100">
+                <p
+                  className={cn(
+                    'text-[9px] text-center font-black font-mono tracking-[0.2em] uppercase',
+                    isSelected ? 'text-brand-primary' : 'text-gray-400',
+                  )}
+                >
+                  {isSelected ? 'Selected' : 'TAP'}
                 </p>
               </div>
             </HapticTrigger>

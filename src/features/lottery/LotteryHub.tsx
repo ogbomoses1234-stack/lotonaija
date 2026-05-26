@@ -1,17 +1,112 @@
 import { memo, useState, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { LiveTicker } from '@/layout/LiveTicker';
 import { PromotionalBanner } from '@/components/PromotionalBanner';
 import { JackpotCard } from '@/components/JackpotCard';
 import { HowItWorks } from '@/components/HowItWorks';
 import { JackpotWinners } from '@/components/JackpotWinners';
 import { LastWinner } from '@/components/LastWinner';
-import { TicketSelector } from './TicketSelector'; // ✅ Already imported
+import { TicketSelector } from './TicketSelector';
 import { TierSelector } from './TierSelector';
- 
+
 import type { Tier } from '@/types/lottery.types';
 import { LOTTERY_TIERS } from '@/config/lottery.config';
 
+const NAV_ITEMS = [
+  {
+    label: 'My Tickets',
+    icon: '🎫',
+    to: '/tickets',
+  },
+  {
+    label: 'Winners',
+    icon: '🏆',
+    to: '/winners',
+  },
+  {
+    label: 'Results',
+    icon: '📊',
+    to: '/results',
+  },
+];
+
+const SectionHeader = ({ title }: { title: string }) => (
+  <div className="px-4">
+    <h3 className="font-black text-[11px] uppercase tracking-[0.18em] text-gray-400">
+      {title}
+    </h3>
+  </div>
+);
+
+const NavigationCard = ({
+  label,
+  icon,
+  onClick,
+}: {
+  label: string;
+  icon: string;
+  onClick: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className="
+      group
+      relative
+      overflow-hidden
+      rounded-2xl
+      border
+      border-border-light
+      bg-base-container
+      p-4
+      active:scale-[0.97]
+      transition-all
+      duration-200
+      hover:border-brand-primary
+      hover:shadow-md
+    "
+  >
+    <div
+      className="
+        mx-auto
+        flex
+        h-14
+        w-14
+        items-center
+        justify-center
+        rounded-2xl
+        border
+        border-border-light
+        bg-gray-50
+        transition-transform
+        duration-200
+        group-hover:scale-105
+      "
+    >
+      <span className="text-2xl">{icon}</span>
+    </div>
+
+    <p
+      className="
+        mt-3
+        text-center
+        text-[11px]
+        font-extrabold
+        uppercase
+        tracking-wide
+        text-gray-500
+        transition-colors
+        group-hover:text-black
+      "
+    >
+      {label}
+    </p>
+  </button>
+);
+
 export const LotteryHub = memo(() => {
+  const navigate = useNavigate();
+
   const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
   const [showTickets, setShowTickets] = useState(false);
 
@@ -25,59 +120,52 @@ export const LotteryHub = memo(() => {
     setSelectedTier(null);
   }, []);
 
-  // ✅ REMOVE: handleTicketPurchase is no longer needed
-  // TicketSelector now handles purchase via store directly
-
   return (
-    <div className="safe-area pb-24 space-y-6 px-0 select-none text-white">
+    <main
+      className="
+        safe-area
+        bg-base-body
+        pb-24
+        text-black
+      "
+    >
       <LiveTicker />
 
       {!showTickets ? (
-        <>
+        <div className="space-y-7 pb-10 animate-fade-in">
+          {/* Hero Banner */}
           <PromotionalBanner />
 
-          {/* Core Navigation Grid */}
-          <div className="space-y-4 px-4">
-            <h2 className="text-left text-white text-base font-black uppercase tracking-wider font-mono">
-              ★ Pick Your Play
-            </h2>
-            
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: 'My Tickets', icon: '🎫', to: '/tickets' },
-                { label: 'Winners', icon: '🏆', to: '/tickets' },
-                { label: 'Results', icon: '📊', to: '/tickets' }
-              ].map((item) => (
-                <button 
+          {/* Navigation */}
+          <section className="space-y-4">
+            <SectionHeader title="Quick Access" />
+
+            <div className="grid grid-cols-3 gap-3 px-4">
+              {NAV_ITEMS.map((item) => (
+                <NavigationCard
                   key={item.label}
-                  onClick={() => window.location.href = item.to} // ✅ Simple nav for demo
-                  className="glass-panel p-4 flex flex-col items-center justify-center gap-2 hover:bg-white/20 active:scale-95 transition-all shadow-md group"
-                >
-                  <div className="w-12 h-12 bg-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-                    <span className="text-2xl">{item.icon}</span>
-                  </div>
-                  <span className="font-bold text-xs tracking-wide">{item.label}</span>
-                </button>
+                  label={item.label}
+                  icon={item.icon}
+                  onClick={() => navigate(item.to)}
+                />
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Quick-Select Horizontal Card Carousel */}
-          <div className="space-y-2">
-            <h3 className="px-4 font-black text-base uppercase tracking-wider font-mono">
-              ⚡ Quick Select Tier
-            </h3>
+          {/* Tier Selector */}
+          <section className="space-y-3">
+            <SectionHeader title="Quick Pick Tiers" />
+
             <TierSelector onTierSelect={handleTierSelect} />
-          </div>
+          </section>
 
-          {/* Detailed Vertical Jackpot Pools */}
-          <div className="space-y-4">
-            <h3 className="px-4 font-black text-base uppercase tracking-wider font-mono">
-              🔥 Live Draw Pools
-            </h3>
-            <div className="space-y-3.5">
-              {LOTTERY_TIERS.map((tier) => ( 
-                <div key={tier.id}>
+          {/* Jackpot Pools */}
+          <section className="space-y-4">
+            <SectionHeader title="Live Jackpot Pools" />
+
+            <div className="space-y-4">
+              {LOTTERY_TIERS.map((tier) => (
+                <div key={tier.id} className="px-4">
                   <JackpotCard
                     tier={tier}
                     isSelected={selectedTier?.id === tier.id}
@@ -86,31 +174,33 @@ export const LotteryHub = memo(() => {
                     totalTickets={1000}
                   />
                 </div>
-              ))} 
+              ))}
             </div>
-          </div>
+          </section>
 
-          {/* Information Divisions */}
-          <div className="space-y-6">
+          {/* Social Proof / Info */}
+          <section className="space-y-6">
             <HowItWorks />
+
             <JackpotWinners />
+
             <LastWinner />
-          </div>
-        </>
+          </section>
+        </div>
       ) : (
-        // ✅ FIX: Render TicketSelector with required props
-        <div className="w-full animate-fade-in">
+        <section className="animate-slide-up px-4 py-4">
           {selectedTier && (
             <TicketSelector
               tier={selectedTier}
               onBack={handleBackToTiers}
             />
           )}
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 });
 
 LotteryHub.displayName = 'LotteryHub';
+
 export default LotteryHub;

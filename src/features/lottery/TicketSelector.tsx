@@ -18,14 +18,14 @@ const generateTicketNumbers = (): number[] => {
 };
 
 export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
-  const ticketStore = useTicketStore();
-  const { balance } = useWalletStore();
-  
+const setTier = useTicketStore((s) => s.setTier);
+const purchase = useTicketStore((s) => s.purchase);
+const balance = useWalletStore((s) => s.balance);
+ 
   const [selectedTicketIndex, setSelectedTicketIndex] = useState<number | null>(null);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
-  // ✅ DEBUG: Log props on mount
   useEffect(() => {
     console.log('🎫 TicketSelector mounted with tier:', tier);
   }, [tier]);
@@ -34,8 +34,7 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
   const availableSlots = Array.from({ length: totalSlots }, (_, i) => i + 1);
 
   const handleSlotClick = (index: number) => {
-    console.log('👆 Slot clicked:', index);
-    setSelectedTicketIndex(index);
+    setSelectedTicketIndex(prev => (prev === index ? null : index));
     setPurchaseSuccess(false);
   };
 
@@ -49,13 +48,10 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
     setIsPurchasing(true);
     try {
       const ticketNumbers = generateTicketNumbers();
-      
-      // ✅ Sync store state before purchase
-      ticketStore.actions.setTier(tier.id);
-      useTicketStore.setState({ selectedNumbers: ticketNumbers });
-      
-      const success = await ticketStore.actions.purchase();
-      
+
+      setTier(tier.id);
+useTicketStore.setState({ selectedNumbers: ticketNumbers });
+const success = await purchase();
       if (success) {
         setSelectedTicketIndex(null);
         setPurchaseSuccess(true);
@@ -70,150 +66,207 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
   };
 
   return (
-    <div className="w-full pb-32 select-none relative min-h-[600px] bg-base-dark">
-      {/* ✅ Simplified ambient orbs - ensure they don't block content */}
-      <div className="fixed top-20 right-0 w-72 h-72 bg-purple-600/10 rounded-full blur-[100px] pointer-events-none z-0" />
-      <div className="fixed bottom-40 left-0 w-64 h-64 bg-pink-600/10 rounded-full blur-[80px] pointer-events-none z-0" />
-
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8 px-4 relative z-20">
-        <button 
+    <div className="w-full pb-32 select-none min-h-screen bg-base-body">
+      {/* ===== Header ===== */}
+      <div className="flex items-center justify-between mb-8  ">
+        <button
           onClick={onBack}
-          className="group flex items-center gap-2.5 px-3 py-2 -ml-3 rounded-xl hover:bg-white/5 transition-all"
+          className="group flex items-center gap-2.5 px-3 py-2 -ml-3 rounded-xl hover:bg-gray-100 transition-colors"
         >
-          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-            <svg className="w-4 h-4 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 group-hover:border-brand-primary transition-colors">
+            <svg
+              className="w-4 h-4 text-gray-600 group-hover:text-brand-primary transition-colors"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
             </svg>
           </div>
-          <span className="text-sm font-bold tracking-wider text-white/70 uppercase font-mono">Back</span>
+          <span className="text-sm font-bold tracking-wider text-gray-600 uppercase font-mono group-hover:text-black transition-colors">
+            Back
+          </span>
         </button>
-        
+
         <div className="text-right">
-          <p className="text-pink-400 text-[10px] font-mono font-black uppercase tracking-[0.2em] mb-1">
+          <p className="text-gray-500 text-[10px] font-mono font-black uppercase tracking-[0.2em] mb-1">
             {tier.name}
           </p>
-          <p className="text-white font-black text-2xl tracking-tight bg-clip-text bg-gradient-to-r from-white to-white/60">
+          <p className="text-black font-black text-2xl tracking-tight">
             {formatNGN(tier.price)}
           </p>
         </div>
       </div>
 
-      {/* HUD Panel */}
-      <div className="relative z-20 px-4 mb-8">
-        <div className="flex items-center justify-between p-4 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10">
+      {/* ===== HUD Panel ===== */}
+      <div className="px-4 mb-8">
+        <div className="flex items-center justify-between p-4 rounded-2xl bg-white border border-gray-200 shadow-sm">
           <div className="flex items-center gap-3">
             <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-pink-500" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75" />
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-brand-primary" />
             </span>
             <div>
-              <p className="text-white font-bold text-sm">Select Ticket Slot</p>
-              <p className="text-white/40 text-[11px] font-mono">TAP TO SECURE ENTRY</p>
+              <p className="text-black font-bold text-sm">Select VIP Ticket</p>
+              <p className="text-gray-400 text-[11px] font-mono">TAP TO SECURE ENTRY</p>
             </div>
           </div>
-          <div className="text-right bg-white/5 px-3 py-1.5 rounded-lg">
-            <p className="text-white font-black font-mono text-lg">{availableSlots.length}</p>
-            <p className="text-white/40 text-[9px] font-bold uppercase">Remaining</p>
+          <div className="text-right bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
+            <p className="text-black font-black font-mono text-lg">{availableSlots.length}</p>
+            <p className="text-gray-400 text-[9px] font-bold uppercase">Remaining</p>
           </div>
         </div>
       </div>
 
-      {/* ✅ Success Feedback Banner */}
+      {/* ===== Success Banner ===== */}
       {purchaseSuccess && (
         <div className="fixed top-20 left-0 right-0 max-w-md mx-auto z-50 px-4 animate-slide-up">
-          <div className="glass-panel bg-brand-success/20 border-brand-success/40 border rounded-2xl p-4 flex items-center gap-3">
+          <div className="bg-brand-success/10 border border-brand-success/30 rounded-2xl p-4 flex items-center gap-3 backdrop-blur-sm">
             <svg className="w-6 h-6 text-brand-success flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
             <div>
-              <p className="text-white font-bold text-sm">Ticket Purchased!</p>
-              <p className="text-white/70 text-xs">Check My Tickets to view</p>
+              <p className="text-black font-bold text-sm">Ticket Purchased!</p>
+              <p className="text-gray-600 text-xs">Check My Tickets to view</p>
             </div>
           </div>
         </div>
       )}
 
-      {/* ✅ Ticket Grid - Simplified for visibility */}
-      <div className="grid grid-cols-2 gap-4 gap-y-5 px-4 relative z-20">
+      {/* ===== VIP PASS Ticket Grid ===== */}
+      <div className="grid grid-cols-2 gap-4 px-4">
         {availableSlots.map((slotIndex) => {
           const isSelected = selectedTicketIndex === slotIndex;
-          const ticketNumber = `TKT-${String(slotIndex).padStart(5, '0')}`;
-          
+          const ticketNumber = String(slotIndex).padStart(5, '0');
+
           return (
-            <div 
+            <button
               key={slotIndex}
+              onClick={() => handleSlotClick(slotIndex)}
+              disabled={isPurchasing}
               className={cn(
-                "relative transition-all duration-300",
-                isSelected ? "scale-[1.03] ring-2 ring-pink-500/50" : "hover:scale-[1.02]",
-                "bg-gradient-to-b from-[#1a1a2e] to-[#0f0f1a] border border-white/10 rounded-xl p-4"
+                'relative group overflow-hidden rounded-2xl transition-all duration-300',
+                'hover:scale-[1.02] active:scale-[0.98]',
+                isSelected 
+                  ? 'shadow-2xl shadow-brand-primary/20 ring-2 ring-brand-primary/40' 
+                  : 'shadow-lg'
               )}
+              style={{
+                background: isSelected 
+                  ? 'linear-gradient(135deg, #6b21a8 0%, #4c1d95 50%, #2e1065 100%)'
+                  : 'linear-gradient(135deg, #1e1b4b 0%, #0f0e17 50%, #020617 100%)',
+              }}
             >
-              {/* ✅ Removed complex CSS masking for now - use simple border instead */}
-              <button
-                onClick={() => handleSlotClick(slotIndex)}
-                disabled={isPurchasing}
-                className="w-full text-left"
-              >
-                {/* Top Banner */}
-                <div className="border-b border-dashed border-white/10 pb-3 mb-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[9px] font-black tracking-widest text-white/30 uppercase font-mono">VIP PASS</span>
-                    <div className={cn("w-1.5 h-1.5 rounded-full", isSelected ? "bg-pink-400 animate-pulse" : "bg-white/10")} />
+              {/* Perforation Notches - Left & Right */}
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-base-body rounded-r-full z-10" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-8 bg-base-body rounded-l-full z-10" />
+
+              {/* Card Content */}
+              <div className="p-5 space-y-4">
+                {/* Header Section */}
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/60 font-mono">
+                      VIP PASS
+                    </p>
+                    <p className="text-xl font-black text-white mt-1 font-mono">
+                      #{ticketNumber}
+                    </p>
                   </div>
-                  <p className={cn("text-xs font-mono font-black tracking-widest mt-1", isSelected ? "text-pink-300" : "text-white/80")}>
-                    #{ticketNumber.replace('TKT-', '')}
+                  <div className="flex flex-col items-end gap-2">
+                    <div className={cn(
+                      'w-2 h-2 rounded-full transition-all duration-300',
+                      isSelected ? 'bg-pink-400 shadow-[0_0_8px_rgba(244,114,182,0.8)]' : 'bg-white/20'
+                    )} />
+                    <p className="text-[9px] font-bold uppercase tracking-wider text-white/40 font-mono">
+                      DIGITAL
+                    </p>
+                  </div>
+                </div>
+
+                {/* Dashed Separator */}
+                <div className="border-t-2 border-dashed border-white/20" />
+
+                {/* Potential Prize Section */}
+                <div className="text-center py-3">
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/50 mb-2 font-mono">
+                    POTENTIAL
                   </p>
-                </div>
-
-                {/* Body */}
-                <div className="py-4 text-center">
-                  <span className="text-[8px] font-bold text-white/30 tracking-[0.2em] uppercase font-mono mb-2 block">POTENTIAL</span>
-                  <div className={cn("text-xl font-black tracking-tighter", isSelected ? "text-pink-400" : "text-white/90")}>
+                  <p className="text-4xl font-black text-white tracking-tight">
                     {formatNGN(tier.price)}
-                  </div>
-                  <div className="mt-2 inline-flex items-center justify-center px-2 py-0.5 rounded bg-black/40 border border-white/5">
-                    <p className="text-[8px] font-bold text-white/50 font-mono uppercase">Pool: {tier.pool.toLocaleString()}</p>
+                  </p>
+                  
+                  {/* Pool Badge */}
+                  <div className="mt-3 inline-flex items-center px-3 py-1.5 rounded-full bg-black/40 border border-white/10">
+                    <p className="text-[9px] font-bold text-white/70 font-mono uppercase tracking-wider">
+                      Pool: {tier.pool.toLocaleString()}
+                    </p>
                   </div>
                 </div>
 
-                {/* Footer */}
-                <div className="pt-3 border-t border-dashed border-white/10">
-                  <p className={cn("text-[9px] text-center font-black font-mono tracking-[0.2em] uppercase", isSelected ? "text-pink-400" : "text-white/20")}>
+                {/* Dashed Separator */}
+                <div className="border-t-2 border-dashed border-white/20" />
+
+                {/* Barcode & Footer */}
+                <div className="space-y-3">
+                  {/* Barcode */}
+                  <div className="flex items-center justify-center gap-[2px] h-8">
+                    {[3, 1, 2, 4, 1, 3, 2, 1, 4, 2, 1, 3, 1, 2, 4, 1].map((width, idx) => (
+                      <div
+                        key={idx}
+                        className={cn(
+                          'h-full rounded-sm',
+                          isSelected ? 'bg-pink-400/60' : 'bg-white/30'
+                        )}
+                        style={{ width: `${width * 2}px` }}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Selection Status */}
+                  <p className={cn(
+                    'text-[10px] font-black uppercase tracking-[0.2em] text-center font-mono transition-all duration-300',
+                    isSelected ? 'text-pink-400' : 'text-white/30'
+                  )}>
                     {isSelected ? 'SELECTED ★' : 'TAP TO SELECT'}
                   </p>
                 </div>
-              </button>
-            </div>
+              </div>
+
+              {/* Glow Effect for Selected */}
+              {isSelected && (
+                <div className="absolute inset-0 bg-gradient-to-t from-pink-500/10 to-transparent pointer-events-none" />
+              )}
+            </button>
           );
         })}
       </div>
 
-      {/* ✅ Fallback if grid is empty */}
+      {/* Fallback */}
       {availableSlots.length === 0 && (
-        <div className="text-center py-12 text-white/50">
+        <div className="text-center py-12 text-gray-400">
           <p>No tickets available for this tier</p>
         </div>
       )}
 
-      {/* Purchase Drawer */}
+      {/* ===== Purchase Drawer ===== */}
       {selectedTicketIndex !== null && !purchaseSuccess && (
         <div className="fixed bottom-40 left-0 right-0 max-w-md mx-auto z-50 px-4">
-          <div className="rounded-2xl overflow-hidden bg-black/60 backdrop-blur-xl border border-white/10 shadow-2xl">
+          <div className="rounded-2xl bg-white border border-gray-200 shadow-2xl overflow-hidden">
             <div className="p-5 flex items-center justify-between gap-4">
               <div>
-                <p className="text-[10px] text-white/50 font-mono uppercase">Ready</p>
-                <p className="text-white font-black text-xl font-mono">
+                <p className="text-[10px] text-gray-400 font-mono uppercase">Ready to buy</p>
+                <p className="text-black font-black text-xl font-mono">
                   TKT-{String(selectedTicketIndex).padStart(5, '0')}
                 </p>
               </div>
-              
+
               <button
                 onClick={handlePurchase}
                 disabled={isPurchasing || balance < tier.price}
                 className={cn(
-                  "relative overflow-hidden bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black  py-3.5 px-6 rounded-xl transition-all active:scale-95",
-                  (isPurchasing || balance < tier.price) && "opacity-50 cursor-not-allowed"
+                  'relative overflow-hidden bg-brand-primary text-black font-black py-3.5 px-6 rounded-xl transition-all active:scale-95',
+                  (isPurchasing || balance < tier.price) && 'opacity-50 cursor-not-allowed',
                 )}
               >
                 {isPurchasing ? (
@@ -231,17 +284,17 @@ export const TicketSelector = memo(({ tier, onBack }: TicketSelectorProps) => {
             </div>
           </div>
           {balance < tier.price && (
-            <p className="text-xs text-red-400 text-center mt-2">Insufficient balance</p>
+            <p className="text-xs text-brand-danger text-center mt-2 font-bold">Insufficient balance</p>
           )}
         </div>
       )}
 
-      {/* Post-Purchase: View Tickets Button */}
+      {/* Post‑Purchase CTA */}
       {purchaseSuccess && (
         <div className="fixed bottom-10 left-0 right-0 max-w-md mx-auto z-50 px-4">
           <button
             onClick={onBack}
-            className="w-full glass-panel bg-brand-success/20 border-brand-success/40 border rounded-2xl py-4 flex items-center justify-center gap-2 text-white font-bold"
+            className="w-full bg-brand-primary text-black rounded-2xl py-4 flex items-center justify-center gap-2 font-bold shadow-lg hover:bg-brand-primary/90 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
