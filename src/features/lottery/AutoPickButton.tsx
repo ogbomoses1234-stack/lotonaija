@@ -1,0 +1,23 @@
+import { memo } from 'react';
+import { cn } from '@/utils/cn';
+import { useTicketStore } from '@/store';
+import { HapticTrigger } from '@/components/ui/HapticTrigger';
+import { PrimaryButton } from '@/components/common/PrimaryButton';
+
+/**
+ * Random mathematical index generator with haptic feedback
+ */
+export const AutoPickButton = memo(() => {
+  const { actions } = useTicketStore();
+
+  return (
+    <HapticTrigger as="div" onTrigger={actions.autoPick} className="w-full">
+      <PrimaryButton variant="ghost" size="sm" fullWidth>
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+        Auto-Pick
+      </PrimaryButton>
+    </HapticTrigger>
+  );
+});
+
+AutoPickButton.displayName = 'AutoPickButton';

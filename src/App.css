@@ -1,0 +1,306 @@
+/* ===== App-Specific Component Styles ===== */
+/* This file contains styles that are too specific for index.css 
+   but too reusable for inline Tailwind classes */
+
+/* ===== Lottery Hub Layout ===== */
+.lottery-hub {
+  @apply flex flex-col gap-4 pb-24;
+}
+
+.play-mode-pill {
+  @apply flex bg-white/5 rounded-full p-1 border border-white/10;
+}
+
+.play-mode-btn {
+  @apply flex-1 py-2 px-4 rounded-full text-sm font-medium transition-all duration-150;
+}
+
+.play-mode-btn.active {
+  @apply bg-brand-primary text-white shadow-lg;
+}
+
+.play-mode-btn:not(.active) {
+  @apply text-white/70 hover:text-white hover:bg-white/5;
+}
+
+/* ===== Tier Selector Horizontal Scroll ===== */
+.tier-scroll {
+  @apply flex gap-3 overflow-x-auto pb-2 -mx-4 px-4;
+  @apply scrollbar-hide scroll-smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tier-card {
+  @apply flex-shrink-0 w-40 glass-card cursor-pointer;
+  @apply transition-all duration-150 hover:border-brand-primary/50;
+}
+
+.tier-card.selected {
+  @apply border-2 border-brand-primary bg-brand-primary/10;
+}
+
+.tier-price {
+  @apply text-2xl font-bold text-brand-primary;
+}
+
+.tier-pool {
+  @apply text-xs text-white/60;
+}
+
+/* ===== Number Grid ===== */
+.number-grid {
+  @apply grid grid-cols-5 sm:grid-cols-6 gap-2 my-4;
+}
+
+.number-btn {
+  @apply aspect-square glass-card flex items-center justify-center;
+  @apply text-lg font-semibold transition-all duration-100;
+  @apply active:scale-90;
+}
+
+.number-btn.selected {
+  @apply bg-brand-primary border-brand-primary/50 text-white;
+}
+
+.number-btn.disabled {
+  @apply opacity-40 cursor-not-allowed;
+}
+
+.number-btn:hover:not(.disabled):not(.selected) {
+  @apply border-white/40;
+}
+
+/* ===== Scratch Card Container ===== */
+.scratch-container {
+  @apply relative w-full aspect-[3/4] max-w-sm mx-auto my-6;
+}
+
+.scratch-card-base {
+  @apply absolute inset-0 glass-card flex items-center justify-center;
+}
+
+.scratch-reveal {
+  @apply absolute inset-2 glass-panel flex items-center justify-center;
+  @apply text-4xl font-bold text-brand-accent;
+}
+
+.scratch-overlay {
+  @apply absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-800;
+  @apply flex items-center justify-center text-white/80 text-sm;
+}
+
+/* ===== Checkout Bar Sticky Bottom ===== */
+.checkout-bar {
+  @apply fixed bottom-0 left-0 right-0 z-40;
+  @apply max-w-[var(--mobile-max-width)] mx-auto;
+  @apply glass-panel px-4 py-3 flex items-center justify-between;
+}
+
+.checkout-total {
+  @apply text-lg font-bold;
+}
+
+.checkout-total-label {
+  @apply text-xs text-white/60 block;
+}
+
+.checkout-total-value {
+  @apply text-brand-primary text-xl;
+}
+
+/* ===== Ticket Ledger Cards ===== */
+.ticket-card {
+  @apply glass-card mb-3 transition-all duration-150;
+}
+
+.ticket-card.transferred {
+  @apply opacity-70 border-brand-transfer/50;
+}
+
+.ticket-header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.ticket-draw-id {
+  @apply text-xs font-mono text-white/50;
+}
+
+.ticket-numbers {
+  @apply flex flex-wrap gap-2 mb-3;
+}
+
+.ticket-number-chip {
+  @apply w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold;
+}
+
+.ticket-countdown {
+  @apply text-xs text-brand-accent font-mono font-bold;
+}
+
+/* ===== Transfer Modal ===== */
+.transfer-modal {
+  @apply fixed inset-0 z-50 flex items-end justify-center;
+  @apply bg-black/60 backdrop-blur-sm;
+}
+
+.transfer-sheet {
+  @apply w-full max-w-[var(--mobile-max-width)] glass-panel;
+  @apply rounded-t-[30px] rounded-b-none p-4 pb-6;
+  @apply animate-slide-up;
+}
+
+.transfer-disclaimer {
+  @apply bg-yellow-900/30 border border-yellow-500/30 rounded-2xl p-3 mt-4;
+}
+
+.transfer-disclaimer-text {
+  @apply text-xs text-yellow-200/90 font-medium leading-relaxed;
+}
+
+/* ===== Wallet Balance Panel ===== */
+.balance-panel {
+  @apply glass-card text-center py-8 mb-6;
+}
+
+.balance-label {
+  @apply text-sm text-white/60 mb-1;
+}
+
+.balance-value {
+  @apply text-4xl font-bold text-white tracking-tight;
+}
+
+.balance-currency {
+  @apply text-brand-primary text-lg font-bold;
+}
+
+/* ===== Quick Fund Grid ===== */
+.fund-grid {
+  @apply grid grid-cols-3 gap-3 my-4;
+}
+
+.fund-btn {
+  @apply glass-card py-4 text-center font-semibold transition-all duration-150;
+  @apply active:scale-95 hover:border-brand-primary/50;
+}
+
+.fund-btn.selected {
+  @apply border-2 border-brand-primary bg-brand-primary/10;
+}
+
+/* ===== History Statement Row ===== */
+.history-row {
+  @apply flex items-center justify-between py-3 border-b border-white/10 last:border-0;
+}
+
+.history-date {
+  @apply text-xs text-white/50;
+}
+
+.history-category {
+  @apply text-sm font-medium;
+}
+
+.history-amount {
+  @apply text-sm font-bold font-mono;
+}
+
+.history-amount.positive { @apply text-brand-success; }
+.history-amount.negative { @apply text-red-400; }
+.history-amount.jackpot { @apply text-brand-accent; }
+.history-amount.transfer { @apply text-brand-transfer; }
+
+/* ===== Arcade Instant Play Grid ===== */
+.arcade-grid {
+  @apply grid grid-cols-2 gap-3 my-4;
+}
+
+.arcade-card {
+  @apply aspect-square glass-card flex flex-col items-center justify-center gap-2;
+  @apply cursor-pointer transition-all duration-150 active:scale-95;
+}
+
+.arcade-card-img {
+  @apply w-12 h-12 rounded-full bg-white/10 flex items-center justify-center;
+}
+
+.arcade-card-title {
+  @apply text-xs font-medium text-center;
+}
+
+/* ===== Affiliate Scoreboard ===== */
+.affiliate-stat {
+  @apply glass-card text-center py-4;
+}
+
+.affiliate-stat-value {
+  @apply text-2xl font-bold text-brand-accent;
+}
+
+.affiliate-stat-label {
+  @apply text-xs text-white/60 mt-1;
+}
+
+/* ===== Sharing Deck ===== */
+.share-deck {
+  @apply glass-card p-4 my-4;
+}
+
+.share-link {
+  @apply bg-white/5 rounded-xl px-4 py-3 text-sm font-mono text-white/80;
+  @apply flex items-center justify-between gap-2;
+}
+
+.share-actions {
+  @apply flex gap-2 mt-3;
+}
+
+.share-btn {
+  @apply flex-1 glass-card py-2 text-center text-xs font-medium transition-all duration-150 active:scale-95;
+}
+
+/* ===== Fullscreen Arcade Modal ===== */
+.arcade-modal {
+  @apply fixed inset-0 z-50 bg-base-dark flex flex-col;
+}
+
+.arcade-modal-header {
+  @apply glass-header rounded-b-[30px] border-b-0;
+}
+
+.arcade-modal-content {
+  @apply flex-1 overflow-auto pb-24;
+}
+
+.arcade-modal-wallet {
+  @apply fixed bottom-0 left-0 right-0 z-40;
+  @apply max-w-[var(--mobile-max-width)] mx-auto;
+  @apply glass-panel px-4 py-2 flex items-center justify-between text-sm;
+}
+
+/* ===== Utility Classes ===== */
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-clip {
+  @apply truncate;
+}
+
+.safe-pb {
+  padding-bottom: calc(var(--safe-area-bottom) + 1rem);
+}
+
+/* Hide scrollbar but allow scroll */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Prevent pull-to-refresh on mobile */
+.no-pull {
+  overscroll-behavior-y: contain;
+}

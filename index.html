@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="description" content="Mobile-first lottery platform with instant wins and P2P ticket transfers" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons.svg" />
+    
+    <title>LottoNG • Play • Win • Transfer</title>
+    
+    <!-- Preconnect to API domain for faster REST calls -->
+    <link rel="preconnect" href="https://api.lottong.ng" crossorigin />
+  </head>
+  <body class="bg-base-dark text-white antialiased overflow-x-hidden">
+    <div id="root" class="min-h-screen"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Network status listener for offline banner -->
+    <script>
+      window.addEventListener('load', () => {
+        if (!navigator.onLine) {
+          document.body.classList.add('offline');
+        }
+      });
+      window.addEventListener('online', () => document.body.classList.remove('offline'));
+      window.addEventListener('offline', () => document.body.classList.add('offline'));
+    </script>
+  </body>
+</html>
