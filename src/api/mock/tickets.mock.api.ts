@@ -1,11 +1,11 @@
-import type { TransferPayload } from '@/types/tickets.types';
+import type { TransferPayload, TransferResponse } from '@/types/tickets.types';
 import { 
   getActiveTickets, 
   getHistoricTickets,
   removeActiveTicket,
   addHistoricTicket,
- 
-} from './shared-mock-state'; // ✅ Correct path: same directory (not ../)
+  type HistoricTicket
+} from './shared-mock-state'; // ✅ Correct path: same directory
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -19,19 +19,22 @@ export const mockTicketsApi = {
       }
     };
   },
-  transferTicket: async (data: TransferPayload) => {
+  
+  transferTicket: async (data: TransferPayload): Promise<{ data: TransferResponse }> => {
     await delay(1000);
+    
+    // Find and remove from active tickets
     const transferredTicket = removeActiveTicket(data.ticketId);
     if (!transferredTicket) throw new Error('Ticket not found');
     
-    // ✅ FIX: Add required 'price' property to historic ticket
+    // Add to historic tickets with transferred status
     addHistoricTicket({
       id: transferredTicket.id,
       drawId: transferredTicket.drawId,
       numbers: transferredTicket.numbers,
-      result: 'loss' as const,
+      result: 'loss' as const, // Mock result for transferred tickets
       drawnAt: new Date().toISOString(),
-      price: transferredTicket.price // ✅ Add price from original ticket
+      price: transferredTicket.price // ✅ Pass price from original ticket
     });
     
     return {
@@ -40,15 +43,15 @@ export const mockTicketsApi = {
         transferId: `transfer_${Date.now()}`,
         recipientId: 'user_recipient_mock',
         executedAt: new Date().toISOString(),
-        disclaimerAccepted: true
+        disclaimerAccepted: data.confirmIrreversible
       }
     };
   },
+  
   getTransferStatus: async (ticketId: string) => {
     await delay(200);
     
-    // ✅ FIX: Let TypeScript infer types (no explicit annotation needed)
-    // getActiveTickets() returns Ticket[], so 't' is inferred as Ticket
+    // Let TypeScript infer types from getter return types
     const activeTicket = getActiveTickets().find(t => t.id === ticketId);
     if (activeTicket) {
       return {
@@ -60,8 +63,7 @@ export const mockTicketsApi = {
       };
     }
     
-    // ✅ FIX: Same for historic tickets - let TS infer HistoricTicket type
-    const historicTicket = getHistoricTickets().find(t => t.id === ticketId);
+    const historicTicket = getHistoricTickets().find((t: HistoricTicket) => t.id === ticketId);
     if (historicTicket) {
       return {
         data: { 
@@ -71,6 +73,7 @@ export const mockTicketsApi = {
         }
       };
     }
+    
     throw new Error('Ticket not found');
   }
 };

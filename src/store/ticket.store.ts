@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { lotteryApi, ticketsApi } from '@/api';
-import type { PlayMode, Tier } from '@/types/lottery.types'; // ✅ Removed unused TicketSelection
+import type { PlayMode, Tier } from '@/types/lottery.types';
 import type { Ticket, TransferPayload } from '@/types/tickets.types';
 import { NUMBER_GRID, LOTTERY_TIERS } from '@/utils/constants';
 import { generateUniqueNumbers } from '@/utils/math';
@@ -59,61 +59,72 @@ export const useTicketStore = create<TicketState>()((set, get) => ({
       const { activeTier } = get();
       set({ selectedNumbers: generateUniqueNumbers(activeTier.maxPicks, NUMBER_GRID.min, NUMBER_GRID.max) });
     },
-purchase: async () => {
-  const { selectedNumbers, activeTier } = get();
-  if (selectedNumbers.length === 0) return false;
-  
-  // ✅ FIX: Flat price per ticket (not multiplied by number count)
-  const totalCost = activeTier.price;
-  
-  const { balance } = useWalletStore.getState();
-  if (balance < totalCost) return false;
-  
-  set({ isPurchasing: true });
-  
-  try {
-    await lotteryApi.purchaseTicket({ 
-      tierId: activeTier.id, 
-      numbers: selectedNumbers 
-    });
-    
-    // Refresh stores from shared state
-    useWalletStore.getState().actions.fetchBalance();
-    get().actions.fetchTickets();
-    
-    set({ selectedNumbers: [], isPurchasing: false });
-    return true;
-  } catch {
-    set({ isPurchasing: false });
-    return false;
-  }
-},
+    purchase: async () => {
+      const { selectedNumbers, activeTier } = get();
+      if (selectedNumbers.length === 0) return false;
+      
+      const totalCost = activeTier.price; // ✅ Flat price per ticket
+      const { balance } = useWalletStore.getState();
+      
+      if (balance < totalCost) return false;
+      set({ isPurchasing: true });
+      
+      try {
+        await lotteryApi.purchaseTicket({ 
+          tierId: activeTier.id, 
+          numbers: selectedNumbers 
+        });
+        
+        useWalletStore.getState().actions.fetchBalance();
+        get().actions.fetchTickets();
+        
+        set({ selectedNumbers: [], isPurchasing: false });
+        return true;
+      } catch {
+        set({ isPurchasing: false });
+        return false;
+      }
+    },
     fetchTickets: async () => {
       try {
         const { data } = await ticketsApi.getMyTickets();
-        // ✅ FIX: Cast historic data since mock shape differs from Ticket interface
-        set({ 
-          activeTickets: data.active as Ticket[], 
-          historicTickets: data.history as unknown as Ticket[] 
+        set({
+          activeTickets: data.active as Ticket[],
+          historicTickets: data.history as unknown as Ticket[]
         });
       } catch { /* silent */ }
     },
     openTransfer: (ticket) => set({ transferModalOpen: true, selectedTicketForTransfer: ticket }),
     closeTransfer: () => set({ transferModalOpen: false, selectedTicketForTransfer: null }),
-    executeTransfer: async (payload) => {
+    
+    // ✅ UPDATED: executeTransfer action
+    executeTransfer: async (payload: TransferPayload) => {
       try {
+        // Call API (mock or real)
         await ticketsApi.transferTicket(payload);
+        
+        // Update local state optimistically
         set(state => ({
           activeTickets: state.activeTickets.map(t =>
             t.id === payload.ticketId
-              ? { ...t, status: 'transferred', transferredTo: { phone: payload.recipientPhone, name: 'Recipient', transferredAt: new Date().toISOString() } }
+              ? { 
+                  ...t, 
+                  status: 'transferred', 
+                  transferredTo: { 
+                    phone: payload.recipientPhone, 
+                    name: 'Recipient', 
+                    transferredAt: new Date().toISOString() 
+                  } 
+                }
               : t
           ),
           transferModalOpen: false,
           selectedTicketForTransfer: null
         }));
+        
         return true;
-      } catch {
+      } catch (err) {
+        console.error('Transfer failed:', err);
         return false;
       }
     }

@@ -38,17 +38,26 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 export const mockAuthApi = {
   register: async (data: RegisterPayload) => {
     await delay(800);
+    
+    // Simple validation
     if (data.nuban.length !== 10) {
       throw new Error('NUBAN must be 10 digits');
     }
+    if (!data.agreeTerms) {
+      throw new Error('You must accept the terms to continue');
+    }
+    
     return { data: MOCK_AUTH_RESPONSE };
   },
 
   verifyNuban: async (data: { bankCode: string; nuban: string }) => {
     await delay(600);
+    
+    // Mock verification: accept the demo account
     if (data.nuban === '0123456789') {
       return { data: MOCK_NUBAN_VERIFY };
     }
+    
     throw new Error('Account not found');
   },
 

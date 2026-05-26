@@ -1,16 +1,19 @@
 export type TicketStatus = 'active' | 'transferred' | 'won' | 'lost' | 'expired' | 'voided';
- 
 export type Ticket = {
   id: string;
   drawId: string;
   numbers: number[];
   tierId: string;
-  status: TicketStatus;
+  status: 'active' | 'transferred' | 'won' | 'lost' | 'expired' | 'voided';
   purchasedAt: string;
-  transferredTo?: { phone: string; name: string; transferredAt: string };
+  price: number;
+  transferredTo?: {
+    phone: string;
+    name: string;
+    transferredAt: string;
+  };
   payout?: number;
   matchedNumbers?: number[];
-    price: number;
 };
 
 export type TransferPayload = {
