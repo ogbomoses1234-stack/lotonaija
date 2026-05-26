@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { cn } from '@/utils/cn';
 import { GlassCard } from '@/components/common/GlassCard';
-import { formatNGN, formatPoolSize } from '@/utils/formatters';
+import { formatNGN,   } from '@/utils/formatters';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 
 type StatCard = {

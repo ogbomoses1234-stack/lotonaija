@@ -4,8 +4,7 @@ import { GlassCard } from '@/components/common/GlassCard';
 import { InputField } from '@/components/common/InputField';
 import { BankSelect } from '@/features/auth/BankSelect';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
-import { ProcessingToast } from './ProcessingToast';
-import { formatNGN } from '@/utils/formatters';
+import { ProcessingToast } from './ProcessingToast'; 
 import { cn } from '@/utils/cn';
 
 /**

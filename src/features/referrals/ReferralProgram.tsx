@@ -1,5 +1,4 @@
-import { memo, useState } from 'react';
-import { cn } from '@/utils/cn';
+import { memo, useState } from 'react'; 
 import { GlassCard } from '@/components/common/GlassCard';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { QuickCopyButton } from '@/features/arcade/QuickCopyButton';

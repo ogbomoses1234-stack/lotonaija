@@ -25,9 +25,7 @@ const renderTicket = (ticket: Ticket) => {
 const { name: tierName, price: tierPrice } = getTierInfo(ticket.tierId);
 const displayPrice = ticket.price || tierPrice;
 
-// ✅ FIX: Ensure we have at least one valid date
-const displayDate = ticket.purchasedAt ?? ticket.drawnAt ?? new Date().toISOString();
-
+ 
 return (
 <div 
 key={ticket.id} 
@@ -62,8 +60,8 @@ onClick={() => setSelectedTicket(ticket)}
           ))}
         </div>
         
-   <p className="text-[10px] text-white/40">
-Purchased: {formatDateNG(ticket.purchasedAt ?? ticket.drawnAt ?? new Date())}
+<p className="text-[10px] text-white/40">
+ Purchased: {formatDateNG(ticket.purchasedAt ?? (ticket as any).drawnAt)}
 </p>
       </div>
     );

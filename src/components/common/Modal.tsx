@@ -54,8 +54,8 @@ export const Modal = memo(({
       }
     };
     
-    window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    window.addEventListener('keydown', handleEscape as EventListener);
+    return () => window.removeEventListener('keydown', handleEscape as EventListener);
   }, [isOpen, closeOnEscape, onClose]);
   
   // Focus trap - return focus to first focusable element
@@ -71,8 +71,9 @@ export const Modal = memo(({
     const firstElement = focusableElements[0] as HTMLElement;
     const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
     
-    const handleTab = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+    const handleTab = (e: Event) => {
+      // ✅ FIX: Use Event type, then type guard for KeyboardEvent
+      if (!(e instanceof KeyboardEvent) || e.key !== 'Tab') return;
       
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -87,10 +88,11 @@ export const Modal = memo(({
       }
     };
     
-    modal.addEventListener('keydown', handleTab);
+    // ✅ FIX: Cast to EventListener for TypeScript compatibility
+    (modal as HTMLElement).addEventListener('keydown', handleTab as EventListener);
     firstElement?.focus();
     
-    return () => modal.removeEventListener('keydown', handleTab);
+    return () => (modal as HTMLElement).removeEventListener('keydown', handleTab as EventListener);
   }, [isOpen]);
   
   const handleOverlayClick = useCallback((e: React.MouseEvent) => {
@@ -130,24 +132,21 @@ export const Modal = memo(({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        {(title || onClose) && (
+        {/* ✅ FIX: Only check title since onClose is always defined */}
+        {title && (
           <div className="flex items-center justify-between mb-4">
-            {title && (
-              <h2 id="modal-title" className="text-lg font-semibold text-white">
-                {title}
-              </h2>
-            )}
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="p-2 text-white/60 hover:text-white transition-colors -mr-2"
-                aria-label="Close modal"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+            <h2 id="modal-title" className="text-lg font-semibold text-white">
+              {title}
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 text-white/60 hover:text-white transition-colors -mr-2"
+              aria-label="Close modal"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         )}
         
@@ -169,5 +168,4 @@ export const Modal = memo(({
 });
 
 Modal.displayName = 'Modal';
-
 export default Modal;

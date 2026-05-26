@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import { cn } from '@/utils/cn';
 import { useTicketStore } from '@/store';
 import { HapticTrigger } from '@/components/ui/HapticTrigger';
 import { PrimaryButton } from '@/components/common/PrimaryButton';

@@ -1,11 +1,10 @@
 import { memo, useState } from 'react';
-import { useAuthStore, useWalletStore } from '@/store';
-// ✅ REMOVED: import { cn } from '@/utils/cn'; // Unused
+import {  useWalletStore } from '@/store'; 
 import { formatNGN } from '@/utils/formatters';
 import { SideMenu } from './SideMenu';
 
 export const GlassHeader = memo(() => {
-  const { user } = useAuthStore(); // ✅ Kept for potential future use (e.g., show name)
+   // ✅ Kept for potential future use (e.g., show name)
   const { balance } = useWalletStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

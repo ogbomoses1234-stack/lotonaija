@@ -3,7 +3,7 @@ import { Modal } from '@/components/common/Modal';
 import { PrimaryButton } from '@/components/common/PrimaryButton';
 import { Loader } from '@/components/common/Loader';
 import { useWalletStore } from '@/store';
-import { cn } from '@/utils/cn';
+ 
 import { formatNGN } from '@/utils/formatters';
 
 export type PaymentGatewayMockProps = {
@@ -53,8 +53,14 @@ export const PaymentGatewayMock = memo(({ isOpen, onClose, amount }: PaymentGate
   }
 
   return (
-    <Modal isOpen={isOpen} onClose={step === 'processing' ? undefined : onClose} title="Secure Checkout" size="sm">
-      <div className="space-y-4">
+   <Modal 
+  isOpen={isOpen} 
+  onClose={onClose} // ✅ Always provide the function
+  title="Secure Checkout" 
+  size="sm"
+  // Optional: disable overlay click during processing
+  closeOnOverlay={step !== 'processing'}
+><div className="space-y-4">
         {step === 'processing' ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Loader size="lg" label="Processing Payment..." />

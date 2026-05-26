@@ -16,11 +16,23 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-core': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-state': ['zustand'],
-          'vendor-http': ['axios'],
-          'vendor-utils': ['clsx', 'tailwind-merge']
+        // ✅ Use function syntax for manualChunks to avoid type errors
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-core';
+            }
+            if (id.includes('zustand')) {
+              return 'vendor-state';
+            }
+            if (id.includes('axios')) {
+              return 'vendor-http';
+            }
+            if (id.includes('clsx') || id.includes('tailwind-merge')) {
+              return 'vendor-utils';
+            }
+            return 'vendor';
+          }
         }
       }
     }
@@ -28,13 +40,13 @@ export default defineConfig({
   server: {
     port: 3000,
     strictPort: true,
-    host: true,        // ✅ Allow LAN access for phone testing
+    host: true,
     hmr: {
-      host: 'localhost' // Keep HMR stable on localhost
+      host: 'localhost'
     }
   },
   preview: {
     port: 4173,
-    host: true         // ✅ Allow LAN access for preview builds
+    host: true
   }
 });

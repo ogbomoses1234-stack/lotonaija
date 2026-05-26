@@ -1,6 +1,5 @@
 import { memo } from 'react';
-import { cn } from '@/utils/cn';
-
+ 
 export const HowItWorks = memo(() => {
   const steps = [
     {

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useWalletStore } from '@/store';
 import { cn } from '@/utils/cn';
-import { formatNGN, formatDateNG, formatTransactionType, formatTransactionAmount } from '@/utils/formatters';
+import {  formatDateNG, formatTransactionType, formatTransactionAmount } from '@/utils/formatters';
 import { GlassCard } from '@/components/common/GlassCard';
 
 /**

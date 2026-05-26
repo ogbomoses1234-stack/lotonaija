@@ -4,14 +4,21 @@ import { cn } from '@/utils/cn';
 import { formatNGN, formatDateNG } from '@/utils/formatters';
 
 export type HistoricDrawCardProps = {
-  ticket: { id: string; numbers: number[]; result: string; payout?: number; drawnAt: string };
+  ticket: { 
+    id: string; 
+    numbers: number[]; 
+    result: string; 
+    payout?: number; 
+    drawnAt: string 
+  };
 };
 
 /**
  * Completed results, payout status, immutable UI
  */
 export const HistoricDrawCard = memo(({ ticket }: HistoricDrawCardProps) => {
-  const isWin = ticket.result === 'win' || ticket.payout > 0;
+  // ✅ FIX: Add nullish check for payout
+  const isWin = ticket.result === 'win' || (ticket.payout !== undefined && ticket.payout > 0);
 
   return (
     <GlassCard className={cn("mb-3 opacity-80 border-white/10", isWin && "border-emerald-500/30 bg-emerald-900/10")}>
@@ -20,7 +27,8 @@ export const HistoricDrawCard = memo(({ ticket }: HistoricDrawCardProps) => {
         <span className={cn("text-xs font-bold px-2 py-0.5 rounded-full", 
           isWin ? "bg-emerald-500/20 text-emerald-400" : "bg-white/10 text-white/50"
         )}>
-          {isWin ? `+${formatNGN(ticket.payout || 0, { showDecimals: false })}` : 'No Match'}
+          {/* ✅ FIX: Use nullish coalescing for payout */}
+          {isWin ? `+${formatNGN(ticket.payout ?? 0, { showDecimals: false })}` : 'No Match'}
         </span>
       </div>
 

@@ -29,7 +29,7 @@ export const App = () => {
   return (
     <div className={`relative ${!isOnline ? 'offline' : ''}`}>
       <OfflineBanner />
-      <ToastContainer />
+    
       {/* Routes render here via GlobalShell -> Outlet */}
     </div>
   );

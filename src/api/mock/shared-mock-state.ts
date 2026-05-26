@@ -6,6 +6,19 @@ import type { Transaction } from '@/types/wallet.types';
 import type { Ticket } from '@/types/tickets.types';
 
 // ============================================================================
+// TYPE EXPORTS
+// ============================================================================
+export type HistoricTicket = {
+  id: string;
+  drawId: string;
+  numbers: number[];
+  result: 'win' | 'loss' | 'partial';
+  payout?: number;
+  drawnAt: string;
+  price: number; // ✅ Required for consistency with Ticket interface
+};
+
+// ============================================================================
 // WALLET STATE
 // ============================================================================
 export let mockWalletBalance = 15000; // NGN starting balance
@@ -36,38 +49,28 @@ export let mockTransactions: Transaction[] = [
 // ============================================================================
 // TICKET STATE
 // ============================================================================
-// For mockActiveTickets:
 export let mockActiveTickets: Ticket[] = [
-{
-id: 'ticket_active_001',
-drawId: 'draw_20240524_2000',
-numbers: [7, 14, 23, 31, 42, 49],
-tierId: 'tier-2',
-status: 'active',
-purchasedAt: new Date(Date.now() - 3600000).toISOString(),
-price: 500
-}
+  {
+    id: 'ticket_active_001',
+    drawId: 'draw_20240524_2000',
+    numbers: [7, 14, 23, 31, 42, 49],
+    tierId: 'tier-2',
+    status: 'active',
+    purchasedAt: new Date(Date.now() - 3600000).toISOString(),
+    price: 500 // ✅ Matches tier-2/Silver price
+  }
 ];
 
-// For mockHistoricTickets:
-export let mockHistoricTickets: Array<{
-id: string;
-drawId: string;
-numbers: number[];
-result: 'win' | 'loss' | 'partial';
-payout?: number;
-drawnAt: string;
-price: number;
-}> = [
-{
-id: 'ticket_hist_001',
-drawId: 'draw_20240523_2000',
-numbers: [5, 11, 22, 35, 44, 48],
-result: 'win',
-payout: 5000,
-drawnAt: new Date(Date.now() - 86400000).toISOString(),
-price: 500
-}
+export let mockHistoricTickets: HistoricTicket[] = [
+  {
+    id: 'ticket_hist_001',
+    drawId: 'draw_20240523_2000',
+    numbers: [5, 11, 22, 35, 44, 48],
+    result: 'win',
+    payout: 5000,
+    drawnAt: new Date(Date.now() - 86400000).toISOString(),
+    price: 500 // ✅ Consistent with active ticket pricing
+  }
 ];
 
 // ============================================================================
@@ -118,15 +121,7 @@ export const removeActiveTicket = (ticketId: string) => {
   return null;
 };
 
-export const addHistoricTicket = (ticket: {
-  id: string;
-  drawId: string;
-  numbers: number[];
-  result: 'win' | 'loss' | 'partial';
-  payout?: number;
-  drawnAt: string;
-  price: number; // ✅ FIX: Require price in historic ticket param
-}) => {
+export const addHistoricTicket = (ticket: HistoricTicket) => {
   mockHistoricTickets.unshift(ticket);
   return ticket;
 };
@@ -134,10 +129,10 @@ export const addHistoricTicket = (ticket: {
 // ============================================================================
 // GETTERS - Return copies to prevent direct mutation
 // ============================================================================
-export const getActiveTickets = () => [...mockActiveTickets];
-export const getHistoricTickets = () => [...mockHistoricTickets];
-export const getBalance = () => mockWalletBalance;
-export const getTransactions = () => [...mockTransactions];
+export const getActiveTickets = (): Ticket[] => [...mockActiveTickets];
+export const getHistoricTickets = (): HistoricTicket[] => [...mockHistoricTickets];
+export const getBalance = (): number => mockWalletBalance;
+export const getTransactions = (): Transaction[] => [...mockTransactions];
 export const getAffiliateMetrics = () => ({ ...mockAffiliateMetrics });
 
 // ============================================================================
@@ -145,6 +140,7 @@ export const getAffiliateMetrics = () => ({ ...mockAffiliateMetrics });
 // ============================================================================
 export const resetMockState = () => {
   mockWalletBalance = 15000;
+  
   mockTransactions = [
     {
       id: 'tx_001',
@@ -167,6 +163,7 @@ export const resetMockState = () => {
       color: 'red'
     }
   ];
+  
   mockActiveTickets = [
     {
       id: 'ticket_active_001',
@@ -175,9 +172,10 @@ export const resetMockState = () => {
       tierId: 'tier-2',
       status: 'active',
       purchasedAt: new Date(Date.now() - 3600000).toISOString(),
-      price: 500 // ✅ FIX: Added price
+      price: 500
     }
   ];
+  
   mockHistoricTickets = [
     {
       id: 'ticket_hist_001',
@@ -186,7 +184,7 @@ export const resetMockState = () => {
       result: 'win',
       payout: 5000,
       drawnAt: new Date(Date.now() - 86400000).toISOString(),
-      price: 500 // ✅ FIX: Added price
+      price: 500
     }
   ];
 };

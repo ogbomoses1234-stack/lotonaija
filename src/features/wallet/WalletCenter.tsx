@@ -1,6 +1,5 @@
 import { memo, useEffect } from 'react';
-import { useWalletStore } from '@/store';
-import { cn } from '@/utils/cn';
+import { useWalletStore } from '@/store'; 
 import { BalancePanel } from './BalancePanel';
 import { QuickFundGrid } from './QuickFundGrid';
 import { WithdrawalPortal } from './WithdrawalPortal';

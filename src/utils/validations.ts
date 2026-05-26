@@ -2,8 +2,7 @@
  * Validation utilities for form inputs
  * Nigerian-specific validators with TypeScript strict mode
  */
-
-import { validators } from './validators';
+import validators from './validators'; 
 
 /**
  * Validation result type
@@ -173,7 +172,7 @@ export const validateAmount = (
  */
 export const validateCompliance = (
   accepted: boolean,
-  terms: string[]
+  
 ): ValidationResult => {
   if (!accepted) {
     return {

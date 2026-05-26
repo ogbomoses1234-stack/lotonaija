@@ -1,7 +1,5 @@
 import { memo } from 'react';
-import { Link } from 'react-router-dom';
-import { cn } from '@/utils/cn';
-
+import { Link } from 'react-router-dom'; 
 export const AppFooter = memo(() => {
   const quickLinks = [
     { label: 'Terms & Conditions', to: '/terms' },

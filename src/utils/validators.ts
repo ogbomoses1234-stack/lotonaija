@@ -152,8 +152,9 @@ export const validatePassword = (password: string): {
  * Check if network is likely available (basic heuristic)
  */
 export const isNetworkLikelyAvailable = (): boolean => {
-  return navigator.onLine && 
-         navigator.connection?.effectiveType !== 'slow-2g';
+  return navigator.onLine &&
+    // ✅ Type assertion for non-standard API
+    (navigator as any).connection?.effectiveType !== 'slow-2g';
 };
 
 export default {

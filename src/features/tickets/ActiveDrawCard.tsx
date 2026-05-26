@@ -1,11 +1,7 @@
-import { memo } from 'react';
-import { useTicketStore } from '@/store';
-import { cn } from '@/utils/cn';
+import { memo } from 'react'; 
 import { GlassCard } from '@/components/common/GlassCard';
-import { CountdownTimer } from './CountdownTimer';
-import { formatTicketNumbers, formatDateNG } from '@/utils/formatters';
-import { DRAW_SCHEDULE } from '@/utils/constants';
-
+import { CountdownTimer } from './CountdownTimer'; 
+import { formatDateNG } from '@/utils/formatters';
 export type ActiveDrawCardProps = {
   ticket: import('@/types/tickets.types').Ticket;
   onTransfer: (ticket: import('@/types/tickets.types').Ticket) => void;

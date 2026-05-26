@@ -9,15 +9,19 @@ import {
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-const MOCK_ACTIVE_DRAW: DrawState = {
+export const MOCK_ACTIVE_DRAW: DrawState = {
   id: 'draw_20240524_2000',
   closesAt: Date.now() + 2 * 60 * 60 * 1000,
   status: 'open',
   jackpotPool: 50_000_000
 };
 
-const MOCK_WINNING_NUMBERS = [7, 14, 23, 31, 42, 49];
-
+export const MOCK_WINNING_NUMBERS = [7, 14, 23, 31, 42, 49];
+export const MOCK_TICKET_PURCHASE = {
+  ticketId: `ticket_${Date.now()}`,
+  drawId: MOCK_ACTIVE_DRAW.id,
+  status: 'confirmed' as const
+};
 export const mockLotteryApi = {
   getTiers: async () => {
     await delay(200);

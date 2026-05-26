@@ -9,10 +9,12 @@ export const useNetwork = () => {
   const [connectionType, setConnectionType] = useState<'slow-2g' | '2g' | '3g' | '4g' | 'wifi' | 'unknown'>('unknown');
 
   const updateConnection = useCallback(() => {
-    setIsOnline(navigator.onLine);
-    const conn = (navigator as Navigator & { connection?: { effectiveType: string } }).connection;
-    setConnectionType(conn?.effectiveType || (navigator.onLine ? 'wifi' : 'unknown'));
-  }, []);
+  setIsOnline(navigator.onLine);
+  // ✅ Type assertion for non-standard API
+  const conn = (navigator as any).connection;
+  const effectiveType = conn?.effectiveType as 'slow-2g' | '2g' | '3g' | '4g' | undefined;
+  setConnectionType(effectiveType || (navigator.onLine ? 'wifi' : 'unknown'));
+}, []);
 
   useEffect(() => {
     window.addEventListener('online', updateConnection);

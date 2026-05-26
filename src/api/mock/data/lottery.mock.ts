@@ -1,7 +1,8 @@
 import type { Tier, DrawState } from '@/types/lottery.types';
 import { LOTTERY_TIERS } from '@/utils/constants';
 
-export const MOCK_TIERS: Tier[] = LOTTERY_TIERS;
+
+export const MOCK_TIERS: readonly Tier[] = LOTTERY_TIERS;
 
 export const MOCK_ACTIVE_DRAW: DrawState = {
   id: 'draw_20240524_2000',

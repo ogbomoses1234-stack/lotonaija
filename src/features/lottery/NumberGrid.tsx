@@ -60,7 +60,10 @@ export const NumberGrid = memo(() => {
         })}
       </div>
 
-      <TooltipWarning message={`Maximum ${NUMBER_GRID.defaultMaxSelection} numbers allowed`} isVisible={showMaxWarning} position="top" />
+      {/* ✅ FIX: Use conditional rendering instead of isVisible prop */}
+      {showMaxWarning && (
+        <TooltipWarning message={`Maximum ${NUMBER_GRID.defaultMaxSelection} numbers allowed`} position="top" children={undefined} />
+      )}
     </div>
   );
 });

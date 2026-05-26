@@ -1,8 +1,7 @@
 import { memo, type SelectHTMLAttributes } from 'react';
 import { cn } from '@/utils/cn';
 import { NIGERIAN_BANKS } from '@/utils/constants';
-import { InputField } from '@/components/common/InputField';
-
+ 
 export type BankSelectProps = Omit<SelectHTMLAttributes<HTMLSelectElement>, 'value' | 'onChange'> & {
   value: string;
   onChange: (code: string) => void;

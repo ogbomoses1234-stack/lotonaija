@@ -1,48 +1,82 @@
-import type { Ticket } from '@/types/tickets.types';
+import type { TransferPayload } from '@/types/tickets.types';
+// ✅ Import Ticket type for active tickets (optional but helpful for clarity)
 
-export const MOCK_ACTIVE_TICKETS: Ticket[] = [
-  {
-    id: 'ticket_active_001',
-    drawId: 'draw_20240524_2000',
-    numbers: [7, 14, 23, 31, 42, 49],
-    tierId: 'tier-2',
-    status: 'active',
-    purchasedAt: new Date(Date.now() - 3600000).toISOString()
-  },
-  {
-    id: 'ticket_active_002',
-    drawId: 'draw_20240524_2000',
-    numbers: [3, 12, 25, 33, 41, 50],
-    tierId: 'tier-1',
-    status: 'active',
-    purchasedAt: new Date(Date.now() - 7200000).toISOString()
-  }
-];
+import { addHistoricTicket, getActiveTickets, getHistoricTickets, removeActiveTicket } from '../shared-mock-state';
 
-export const MOCK_HISTORIC_TICKETS: Array<{
-  id: string;
-  drawId: string;
-  numbers: number[];
-  result: 'win' | 'loss' | 'partial';
-  payout?: number;
-  drawnAt: string;
-}> = [
-  {
-    id: 'ticket_hist_001',
-    drawId: 'draw_20240523_2000',
-    numbers: [5, 11, 22, 35, 44, 48],
-    result: 'win',
-    payout: 5000,
-    drawnAt: new Date(Date.now() - 86400000).toISOString()
+// ✅ FIX 1: Correct import path - same directory uses './' not '../'
+ 
+
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+export const mockTicketsApi = {
+  getMyTickets: async () => {
+    await delay(300);
+    return {
+      data: {
+        active: getActiveTickets(),
+        history: getHistoricTickets()
+      }
+    };
   },
-  {
-    id: 'ticket_hist_002',
-    drawId: 'draw_20240522_2000',
-    numbers: [1, 9, 18, 27, 36, 45],
-    result: 'loss',
-    drawnAt: new Date(Date.now() - 172800000).toISOString()
+  transferTicket: async (data: TransferPayload) => {
+    await delay(1000);
+    const transferredTicket = removeActiveTicket(data.ticketId);
+    if (!transferredTicket) throw new Error('Ticket not found');
+    
+    // ✅ FIX 2: Add required 'price' property when creating historic ticket
+    addHistoricTicket({
+      id: transferredTicket.id,
+      drawId: transferredTicket.drawId,
+      numbers: transferredTicket.numbers,
+      result: 'loss' as const,
+      drawnAt: new Date().toISOString(),
+      price: transferredTicket.price // ✅ Pass price from original active ticket
+    });
+    
+    return {
+      data: {
+        success: true,
+        transferId: `transfer_${Date.now()}`,
+        recipientId: 'user_recipient_mock',
+        executedAt: new Date().toISOString(),
+        disclaimerAccepted: true
+      }
+    };
+  },
+  getTransferStatus: async (ticketId: string) => {
+    await delay(200);
+    
+    // ✅ FIX 3: Let TypeScript infer type - getActiveTickets() returns Ticket[]
+    // So 't' is automatically inferred as Ticket, no annotation needed
+    const activeTicket = getActiveTickets().find(t => t.id === ticketId);
+    
+    if (activeTicket) {
+      return {
+        data: {
+          status: activeTicket.status,
+          recipientPhone: (activeTicket as any).transferredTo?.phone || '',
+          transferredAt: (activeTicket as any).transferredTo?.transferredAt || activeTicket.purchasedAt
+        }
+      };
+    }
+    
+    // ✅ FIX 4: Same for historic tickets - getHistoricTickets() returns HistoricTicket[]
+    // So 't' is automatically inferred as HistoricTicket
+    const historicTicket = getHistoricTickets().find(t => t.id === ticketId);
+    
+    if (historicTicket) {
+      return {
+        data: { 
+          status: 'completed', 
+          recipientPhone: '', 
+          transferredAt: historicTicket.drawnAt 
+        }
+      };
+    }
+    
+    throw new Error('Ticket not found');
   }
-];
+};
 
 export const MOCK_TRANSFER_RESPONSE = {
   success: true,

@@ -12,13 +12,13 @@ import { DeficitModal } from './DeficitModal';
 export const CheckoutBar = memo(() => {
   const { selectedNumbers, activeTier, actions, isPurchasing } = useTicketStore();
   const { balance } = useWalletStore();
-  const { checkBalance, handleInsufficientFunds } = useWalletGuard();
+  const { checkBalance,   } = useWalletGuard();
   
   // ✅ FIX: useState is now defined because we imported it above
   const [showDeficit, setShowDeficit] = useState(false);
 
   const total = selectedNumbers.length * activeTier.price;
-  const { hasSufficientFunds, shortfall } = checkBalance(total);
+  const { hasSufficientFunds,   } = checkBalance(total);
 
   const handleCheckout = () => {
     if (!hasSufficientFunds) {
